@@ -31,16 +31,23 @@ import Layout from '@/layout'
  * all roles can be accessed
  */
 export const constantRoutes = [
-  // {
-  //   path: '/login',
-  //   component: () => import('@/views/login/index'),
-  //   hidden: true
-  // },
+
 
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
+  },
+  {
+    path: '/table',
+    component: Layout,
+    redirect: '/table/index',
+    children: [{
+      path: 'index',
+      name: 'Table',
+      component: () => import('@/views/table/index'),
+      meta: { title: '表格', icon: 'dashboard' }
+    }]
   },
   // 首页
   {
