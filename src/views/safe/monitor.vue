@@ -48,7 +48,44 @@
         </div>
       </div>
       <div class="pie-box">
-        <pie-chart :chart-data="piedata"></pie-chart>
+        <div class="pie-container">
+          <div class="pie-title">
+            <span>攻击类型TOP5</span>
+            <el-select style="width: 80px; height: 20px" v-model="value" placeholder="不限">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            </el-select>
+          </div>
+          <pie-chart :chart-data="piedata"></pie-chart>
+        </div>
+        <div class="pie-container">
+          <div class="pie-title">
+            <span>时间级别TOP5</span>
+            <el-select style="width: 80px; height: 20px" v-model="value" placeholder="不限">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            </el-select>
+          </div>
+          <pie-chart :chart-data="piedata"></pie-chart>
+        </div>
+      </div>
+    </div>
+    <div class="chart-box">
+      <div class="bar-box">
+        <div class="pie-title">
+          <span>安全事件分布</span>
+          <el-select style="width: 80px; height: 20px" v-model="value" placeholder="不限">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </div>
+        <bar-chart :chart-data="bardata"></bar-chart>
+      </div>
+      <div class="line-box">
+        <div class="pie-title">
+          <span>安全事件趋势</span>
+          <el-select style="width: 80px; height: 20px" v-model="value" placeholder="不限">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </div>
+        <line-chart :chart-data="bardata"></line-chart>
       </div>
     </div>
   </div>
@@ -56,18 +93,48 @@
 
 <script>
 import Map from './components/mappoint'
-import PieChart from '../../components/Charts/PieChart'
-import trychart from '../../components/Charts/trychart'
+import PieChart from '@/components/Charts/PieChart'
+import BarChart from '@/components/Charts/BarChart'
+import LineChart from '@/components/Charts/LineChart'
 export default {
   name: 'Safe-monitor',
   components: {
     'el-map': Map,
     PieChart,
-    trychart
+    BarChart,
+    LineChart
   },
   data() {
     return {
-      piedata: [10, 3, 52, 56, 1]
+      piedata: [
+        { name: '协议分析', value: 30 },
+        { name: '木马攻击', value: 20 },
+        { name: '拒绝服务攻击', value: 30 },
+        { name: 'finger服务攻击', value: 40 },
+        { name: '远程服务攻击', value: 20 },
+        { name: '其他', value: 10 }
+      ],
+      bardata: [
+        { name: '协议分析', value: 30 },
+        { name: '木马攻击', value: 20 },
+        { name: '拒绝服务攻击', value: 30 },
+        { name: 'finger服务攻击', value: 40 },
+        { name: '远程服务攻击', value: 20 },
+        { name: '其他', value: 10 },
+        { name: '协议分析1', value: 30 },
+        { name: '木马攻击1', value: 20 },
+        { name: '拒绝服务攻击1', value: 30 },
+        { name: 'finger服务攻击1', value: 40 },
+        { name: '远程服务攻击1', value: 20 },
+        { name: '其他1', value: 10 }
+      ],
+      options: [
+        {
+          value: '选项1',
+          label: '不限'
+        }
+      ],
+      value: ''
     }
   },
   computed: {},
@@ -80,6 +147,17 @@ export default {
 
 <style lang="scss" scoped>
 .content-container {
+  .pie-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    span {
+      font-family: '微软雅黑';
+      font-weight: 400;
+      font-style: normal;
+      font-size: 16px;
+    }
+  }
   .card-group {
     display: flex;
     justify-content: space-between;
@@ -156,6 +234,25 @@ export default {
     }
     .pie-box {
       width: 49.4%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .pie-container {
+        background-color: #fff;
+        height: 48.5%;
+      }
+    }
+  }
+  .chart-box {
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    .bar-box {
+      width: 49.5%;
+      background-color: #fff;
+    }
+    .line-box {
+      width: 49.5%;
       background-color: #fff;
     }
   }

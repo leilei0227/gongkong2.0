@@ -57,6 +57,7 @@
 
 <script>
 import Map from './components/mapshow'
+import { fetchList } from '@/api/deviceType'
 export default {
   name: 'Dashboard',
   components: {
@@ -91,6 +92,15 @@ export default {
           fix: '28'
         }
       ]
+    }
+  },
+  created() {
+    // this.fetchList()
+  },
+  methods: {
+    async fetchList() {
+      const res = await fetchList()
+      console.log(res)
     }
   }
 }

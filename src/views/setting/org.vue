@@ -1,126 +1,150 @@
 <template>
   <div class="content-container">
-    <div class="content-box">
-      <div class="content-box-input">
-        <el-input v-model="input" style="width: 200px; margin-right: 10px" placeholder="用户名"></el-input>
-        <el-select v-model="value" style="width: 200px" placeholder="请选择"></el-select>
-      </div>
-      <div class="content-box-button">
-        <el-button type="primary">添加</el-button>
-        <el-button type="primary">导出</el-button>
-      </div>
-    </div>
-    <div class="content-table">
-      <el-table :data="tableData" border style="width: 100%" :cell-style="{ 'text-align': 'center' }" :header-cell-style="{ 'text-align': 'center' }">
-        <el-table-column label="#" width="50">
-          <template slot-scope="scope">
-            <span>{{ scope.row.id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="组织名称" width="220">
-          <template slot-scope="scope">
-            <span>{{ scope.row.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="用户名" width="220">
-          <template slot-scope="scope">
-            <span>{{ scope.row.discuss }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="角色" width="220">
-          <template slot-scope="scope">
-            <span>{{ scope.row.panduan }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="真实姓名" width="220">
-          <template slot-scope="scope">
-            <span>{{ scope.row.panduan }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="值班调度" width="220">
-          <template slot-scope="scope">
-            <span>{{ scope.row.panduan }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="班长" width="220">
-          <template slot-scope="scope">
-            <span>{{ scope.row.panduan }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+    <div class="tree-box">
+      <div class="tree-title">昆仑总部</div>
+      <el-tree :data="treeData" node-key="id" :default-expanded-keys="[1, 2, 3, 4]" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
     </div>
 
-    <pagination />
+    <div class="input-box">
+      <div class="row-box">
+        <div class="row-title">设备名</div>
+        <el-input v-model="inputData"></el-input>
+      </div>
+      <div class="row-box">
+        <div class="row-title">设备种类</div>
+        <el-input></el-input>
+      </div>
+      <div class="row-box">
+        <div class="row-title">MAC地址</div>
+        <el-input></el-input>
+      </div>
+      <div class="row-box">
+        <div class="row-title">IP地址</div>
+        <el-input></el-input>
+      </div>
+      <div class="row-box">
+        <div class="row-title">上个设备</div>
+        <el-input></el-input>
+      </div>
+      <div class="row-box">
+        <div class="row-title">是否监控</div>
+        <el-input></el-input>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import Pagination from '@/components/Pagination'
 export default {
-  name: 'Setting-org'
-  // components: { Pagination },
-  // data() {
-  //   return {
-  //     currentPage1: 1,
-  //     input: '',
-  //     tableData: [
-  //       {
-  //         id: '1',
-  //         name: 'SPD',
-  //         discuss: '浪涌报警',
-  //         panduan: '条件 故障类型'
-  //       },
-  //       {
-  //         id: '2',
-  //         name: 'SPD',
-  //         discuss: '浪涌报警',
-  //         panduan: '条件 故障类型'
-  //       },
-  //       {
-  //         id: '3',
-  //         name: 'SPD',
-  //         discuss: '浪涌报警',
-  //         panduan: '条件 故障类型'
-  //       },
-  //       {
-  //         id: '4',
-  //         name: 'SPD',
-  //         discuss: '浪涌报警',
-  //         panduan: '条件 故障类型'
-  //       }
-  //     ]
-  //   }
-  // },
-  // methods: {
-  //   handleSizeChange(val) {
-  //     console.log(`每页 ${val} 条`)
-  //   },
-  //   handleCurrentChange(val) {
-  //     console.log(`当前页: ${val}`)
-  //   }
-  // }
+  name: 'Setting-org',
+  data() {
+    return {
+      inputData: '',
+      tData: {},
+      treeData: [
+        {
+          id: 1,
+          label: '海南分公司',
+          children: [
+            {
+              id: 4,
+              label: '深南公司',
+              children: [
+                {
+                  label: '爱华西加气站'
+                },
+                {
+                  label: '爱华西加气站'
+                },
+                {
+                  label: '爱华西加气站'
+                },
+                {
+                  label: '爱华西加气站'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 2,
+          label: '山东分公司',
+          children: [
+            {
+              label: '济宁',
+              children: [
+                {
+                  label: '嘉祥'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 4,
+          label: '黑龙江分公司'
+        },
+        {
+          id: 3,
+          label: '上海分公司',
+
+          children: [
+            {
+              label: '白鹤公司'
+            }
+          ]
+        }
+      ],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
+    }
+  },
+  methods: {
+    handleNodeClick(data) {
+      this.tData = data
+      this.inputData = this.tData.label
+      console.log(this.inputData)
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-// .content-container {
-//   background-color: #fff;
-//   .content-box {
-//     display: flex;
-//     justify-content: space-between;
-//     padding: 10px;
-//     .content-box-input {
-//       display: flex;
-//     }
-//   }
-//   .content-table {
-//     padding: 10px;
-//   }
-// }
+.content-container {
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  .tree-box {
+    width: 25%;
+    margin: 10px;
+    border: 1px solid #dcdfe6;
+    .tree-title {
+      text-align: center;
+      background-color: rgb(219, 227, 235);
+      line-height: 28px;
+    }
+    .el-tree {
+    }
+  }
+  .input-box {
+    width: 75%;
+    margin: 10px;
+    margin-left: 40px;
+    .row-box {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      .row-title {
+        width: 6%;
+        text-align: right;
+        margin-right: 10px;
+      }
+      .el-input {
+        width: 50%;
+      }
+    }
+  }
+}
 </style>

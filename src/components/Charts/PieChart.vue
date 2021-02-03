@@ -41,7 +41,7 @@ export default {
       type: String,
       default: ''
     },
-    showLegend: { type: Boolean, default: false }
+    showLegend: { type: Boolean, default: true }
   },
   data() {
     return {
@@ -78,21 +78,24 @@ export default {
           textStyle: { color: '#ffffff', fontWeight: 'normal', fontSize: '14' },
           left: 'center'
         },
-        tooltip: { trigger: 'item', formatter: '{a} <br/>{b}: {c}万方 ({d}%)' },
+        //  tooltip: { trigger: 'item', formatter: '{a} <br/>{b}: {c}万方 ({d}%)' },
         legend: {
-          right: 10,
+          right: 50,
           top: 'center',
           show: this.showLegend,
           orient: 'vertical',
           textStyle: {
-            color: '#fff'
+            fontSize: '18px',
+            lineHeight: 26,
+            color: '#333'
           }
         },
         series: [
           {
             name: this.seriesName,
             type: 'pie',
-            radius: ['40%', '60%'],
+            radius: ['40%', '70%'],
+            center: ['35%', '50%'],
             avoidLabelOverlap: true,
             label: { show: this.showLabel, position: this.labelPosition },
             emphasis: { label: { show: true, fontSize: '14' } },

@@ -13,11 +13,25 @@
         <el-table-column prop="downline" label="备件下限" width="150"> </el-table-column>
         <el-table-column prop="address" label="存放地点" width="130"> </el-table-column>
         <el-table-column label="操作">
-          <template>
-            <el-button size="mini">配置</el-button>
+          <template slot-scope="{ row }">
+            <el-button size="mini" @click="handleEdit(row)">配置</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <el-dialog :visible.sync="dialogVisible" width="800px">
+        <el-form ref="form" label-width="100px" :model="temp">
+          <el-form-item label="备件下限">
+            <el-input v-model="temp.downline"></el-input>
+          </el-form-item>
+          <el-form-item label="存放地点">
+            <el-input v-model="temp.address"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="updateData()">保存</el-button>
+            <el-button @click="dialogVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -25,8 +39,23 @@
 <script>
 export default {
   name: 'Device-spare',
+
   data() {
     return {
+      dialogVisible: false,
+      temp: {
+        id: 0,
+        class: '',
+        totalnum: '',
+        yunxing: '',
+        beijian: '',
+        jianding: '',
+        repair: '',
+        bad: '',
+        bili: '',
+        downline: '',
+        address: ''
+      },
       tableData: [
         {
           class: '服务器',
@@ -89,6 +118,23 @@ export default {
           address: '501'
         }
       ]
+    }
+  },
+  methods: {
+    updateData() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.form = Object.assign({}, this.temp)
+          this.dialogVisible = false
+        }
+      })
+    },
+    handleEdit(row) {
+      this.temp = Object.assign({}, row)
+      this.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs['form'].clearValidate()
+      })
     }
   }
 }

@@ -35,7 +35,7 @@
       <div class="title">
         <span>图形展示</span>
       </div>
-      <div class="chart"></div>
+      <div class="chart-box"><line-chart :chart-data="linedata" width="800px"></line-chart></div>
     </div>
     <div class="table-chart">
       <div class="title">
@@ -69,10 +69,28 @@
 </template>
 
 <script>
+import LineChart from '@/components/Charts/LineChart'
 export default {
   name: 'Analysis-device',
+  components: {
+    LineChart
+  },
   data() {
     return {
+      linedata: [
+        { name: '协议分析', value: 30 },
+        { name: '木马攻击', value: 20 },
+        { name: '拒绝服务攻击', value: 30 },
+        { name: 'finger服务攻击', value: 40 },
+        { name: '远程服务攻击', value: 20 },
+        { name: '其他', value: 10 },
+        { name: '协议分析1', value: 30 },
+        { name: '木马攻击1', value: 20 },
+        { name: '拒绝服务攻击1', value: 30 },
+        { name: 'finger服务攻击1', value: 40 },
+        { name: '远程服务攻击1', value: 20 },
+        { name: '其他1', value: 10 }
+      ],
       formInline: {
         device: '',
         repair: '',
@@ -125,8 +143,10 @@ export default {
     width: 100%;
     padding: 20px;
     padding-top: 0px;
-    .chart {
+    .chart-box {
       height: 300px;
+      margin-left: 200px;
+      margin-right: 200px;
     }
   }
   .table-chart {
