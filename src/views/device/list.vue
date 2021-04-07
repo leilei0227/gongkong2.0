@@ -18,12 +18,12 @@
     </div>
     <div class="content-table">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="name" label="设备名称" width="150"> </el-table-column>
-        <el-table-column prop="class" label="设备种类" width="130"> </el-table-column>
-        <el-table-column prop="producer" label="生产厂商" width="130"> </el-table-column>
-        <el-table-column prop="brand" label="品牌系列" width="150"> </el-table-column>
-        <el-table-column prop="isoid" label="规格型号" width="150"> </el-table-column>
-        <el-table-column prop="sqid" label="序列号" width="150"> </el-table-column>
+        <el-table-column prop="deviceName" label="设备名称" width="150"> </el-table-column>
+        <el-table-column prop="firm.deviceName" label="设备种类" width="130"> </el-table-column>
+        <el-table-column prop="firm.name" label="生产厂商" width="130"> </el-table-column>
+        <el-table-column prop="firm.brand" label="品牌系列" width="150"> </el-table-column>
+        <el-table-column prop="firm.params" label="规格型号" width="150"> </el-table-column>
+        <el-table-column prop="firm.number" label="序列号" width="150"> </el-table-column>
         <el-table-column prop="dateuse" label="投产时间" width="150"> </el-table-column>
         <el-table-column prop="datein" label="质保期限" width="150"> </el-table-column>
         <el-table-column prop="datebad" label="报废时间" width="150"> </el-table-column>
@@ -185,6 +185,7 @@
 </template>
 
 <script>
+import { fetchList } from '@/api/device'
 export default {
   name: 'Device-list',
   data() {
@@ -207,8 +208,9 @@ export default {
         }
       ],
       value: '',
+      tableAllData: [],
       tableData: [
-        {
+        /*  {
           name: '硬盘录像机',
           class: '设备1',
           producer: 'xx厂商',
@@ -255,11 +257,25 @@ export default {
           datein: '2020-02-21',
           datebad: '2050-02-01',
           lifespan: '2年1月10天'
-        }
+        } */
       ]
     }
   },
+  created() {
+    this.fetchList()
+  },
   methods: {
+    async fetchList() {
+      const res = await fetchList()
+      this.tableData = res.data
+      // console.log(this.tableAllData.deviceName)
+      // this.tableData.push(this.tableAllData.deviceName, this.tableAllData.firm)
+      console.log(res.data[0].firm)
+    },
+    getClass(row, column) {
+      var type = row.firm
+      return firm.typeName
+    },
     addDevice() {
       //显示弹框
       this.dialogVisible = true

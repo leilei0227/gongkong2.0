@@ -5,7 +5,7 @@
         <el-select v-model="value" style="width: 200px; margin-right: 10px" placeholder="请选择">
           <el-option v-for="item in optionList" :key="item.id" :label="item.optionName" :value="item.id" />
         </el-select>
-        <el-input v-model="input" style="width: 200px"></el-input>
+        <el-input v-model="inputkey" style="width: 200px"></el-input>
       </div>
       <div class="content-box-button">
         <el-button type="primary" @click="handleCreate()">添加</el-button>
@@ -14,13 +14,14 @@
     </div>
     <div class="content-table">
       <el-table :data="tableData" border fit highlight-current-row style="width: 100%">
-        <el-table-column label="#" prop="userId" />
-        <el-table-column label="组织名称" prop="orgName" />
+        <el-table-column type="selection" width="55"></el-table-column>
+
+        <el-table-column label="组织名称" prop="unitName" />
         <el-table-column label="用户名" prop="username" />
         <el-table-column label="真实姓名" prop="realName" />
         <el-table-column label="角色" prop="roleName" />
-        <el-table-column label="值班调度" prop="onduty" />
-        <el-table-column label="班长" prop="monitor"> </el-table-column>
+        <el-table-column label="值班调度" prop="dutyStatus" />
+        <el-table-column label="站长" prop="userType"> </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="{ row }">
             <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)" />
@@ -32,14 +33,11 @@
     <pagination :total="total" />
     <el-dialog :visible.sync="dialogFormVisible" width="1600px">
       <el-form ref="dataForm" :model="temp" label-position="right" label-width="80px">
-        <el-form-item label="#" prop="uesrId">
-          <el-input v-model="temp.userId" :disabled="dialogStatus === 'update'" />
-        </el-form-item>
-        <el-form-item label="组织名称" prop="orgName">
+        <!--      <el-form-item label="组织名称" prop="orgName">
           <el-select v-model="temp.orgName" filterable class="w-100">
             <el-option v-for="item in orgList" :key="item.id" :label="item.orgName" :value="item.id" />
-          </el-select>
-        </el-form-item>
+          </el-select> -->
+        <!-- </el-form-item> -->
         <el-form-item label="用户名" prop="username">
           <el-input v-model="temp.username" :disabled="dialogStatus === 'update'" placeholder="请输入手机号" />
         </el-form-item>
@@ -56,7 +54,7 @@
             <el-option v-for="item in dutyList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="班长" prop="monitor">
+        <el-form-item label="站长" prop="monitor">
           <el-select v-model="temp.monitor" class="w-100">
             <el-option v-for="item in monitorList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
@@ -72,11 +70,12 @@
 <script>
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import { createUser, updateUser, deleteUser } from '@/api/user'
+import { userList, createUser, updateUser, deleteUser } from '@/api/user'
 // import { fetchList as fetchOrgList } from '@/api/org'
 // import { fetchList as fetchRoleList } from '@/api/role'
 // import { parseTime, array2Object, deleteNullParam } from '@/utils'
 import { userStatusTypeOptions } from '@/utils/options'
+
 export default {
   name: 'User',
   components: { Pagination },
@@ -88,11 +87,11 @@ export default {
   },
   data() {
     return {
-      input: '',
+      inputkey: '',
       value: '',
       total: 10,
       tableData: [
-        {
+        /*  {
           userId: '1',
           orgName: '昆仑公司',
           username: '146789620@qq.com',
@@ -109,13 +108,13 @@ export default {
           roleName: '普通用户',
           onduty: '是',
           monitor: '是'
-        }
+        } */
       ], // 表格数据
       totalCount: 0, // 总条数
       optionList: [
         { id: 1, optionName: '用户名' },
-        { id: 2, optionName: '真实姓名' },
-        { id: 3, optionName: '角色' }
+        { id: 2, optionName: '真实姓名' }
+        // { id: 3, optionName: '角色' }
       ],
       roleList: [
         { id: 1, roleName: '系统管理员' },
@@ -141,7 +140,9 @@ export default {
         pageSize: 10,
         status: undefined,
         roleId: undefined,
-        orgId: undefined
+        orgId: undefined,
+        totalPageNum: 1,
+        count: 0
       },
       userStatusTypeOptions, // 用户状态类型
       dialogFormVisible: false, // dialog 的显示与隐藏
@@ -172,20 +173,33 @@ export default {
     }
   },
   created() {
-    // this.getList()
+    //this.getList()
     // this.getOrgList()
     // this.getRoleList()
+    this.userList()
   },
   methods: {
-    // 获取列表
-    // getList() {
-    //   this.listLoading = true
-    //   fetchList(deleteNullParam(this.listQuery)).then((response) => {
-    //     this.tableData = response.data
-    //     this.totalCount = response.totalCount
-    //     this.listLoading = false
-    //   })
-    // },
+    async userList() {
+      const res = await userList()
+      this.tableData = res.data
+      /* 
+      this.tableData.orgName = res.data.unitName
+      this.tableData.username = res.data.username
+      this.tableData.roleName = res.data.roleName
+      this.tableData.realName = res.data.realName
+      this.tableData.onduty = res.data.dutyStatus
+      this.tableData.monitor = res.data.unitId */
+      console.log(this.tableData)
+    },
+    //获取列表
+    getList() {
+      this.listLoading = true
+      fetchList(deleteNullParam(this.listQuery)).then((response) => {
+        this.tableData = response.data
+        this.totalCount = response.totalCount
+        this.listLoading = false
+      })
+    },
     // // 获取组织列表
     // getOrgList() {
     //   fetchOrgList({

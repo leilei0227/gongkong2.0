@@ -49,28 +49,30 @@ module.exports = {
                     */
                     '^/api': '/'
                 },
-                onProxyRes: function(proxyRes, req, res) {
-                    var cookies = proxyRes.headers['set-cookie'];
-                    // console.log(proxyRes.headers, cookies, typeof cookies);
-                    var cookieRegex = /Domain=\.?xxx.com/i;
-                    // // 返回的cookie中提取domain 
-                    // //修改cookie Path
-                    if (cookies) {
-                        var newCookie = cookies.map(function(cookie) {
-                            // if (cookieRegex.test(cookie)) {
-                            // 将domain设置为localhost 
-                            // return cookie.replace(cookieRegex, 'Domain=localhost');
-                            // }
-                            // return cookie;
+                headers: { Cookie: 'JSESSIONID= CF73EADEB63F9BECC5F2208617618D6B' }
 
-                            return cookie += ';Domain=localhost'
-                        });
-                        delete proxyRes.headers['set-cookie'];
-                        proxyRes.headers['set-cookie'] = newCookie;
-                        console.log(newCookie);
-
-                    }
-                }
+                /*     onProxyRes: function(proxyRes, req, res) {
+                        var cookies = proxyRes.headers['set-cookie'];
+                        // console.log(proxyRes.headers, cookies, typeof cookies);
+                        var cookieRegex = /Domain=\.?xxx.com/i;
+                        // // 返回的cookie中提取domain 
+                        // //修改cookie Path
+                        if (cookies) {
+                            var newCookie = cookies.map(function(cookie) {
+                                // if (cookieRegex.test(cookie)) {
+                                // 将domain设置为localhost 
+                                // return cookie.replace(cookieRegex, 'Domain=localhost');
+                                // }
+                                // return cookie;
+    
+                                return cookie += ';Domain=localhost'
+                            });
+                            delete proxyRes.headers['set-cookie'];
+                            proxyRes.headers['set-cookie'] = newCookie;
+                            console.log(newCookie);
+    
+                        }
+                    } */
             },
         }
 

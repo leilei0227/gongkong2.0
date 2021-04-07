@@ -1,17 +1,17 @@
 <template>
   <div class="content-container">
     <div class="tree-table-container">
-      <el-tree :data="treeData" show-checkbox node-key="id" :default-expanded-keys="[1, 2, 3]" @node-click="handleNodeClick" :default-checked-keys="[5]" :props="defaultProps"> </el-tree>
+      <el-tree :data="treeData" show-checkbox node-key="id" :default-expanded-keys="[1, 2, 3]" @node-click="handleNodeClick" :props="defaultProps"> </el-tree>
       <div class="device-table">
         <div class="device-row">
           <div class="title">设备种类</div>
           <el-input v-model="inputData" style="width: 300px"></el-input>
         </div>
-        <div class="device-row">
+        <div class="device-row" v-show="sigShow">
           <div class="title">信号类型</div>
           <el-input style="width: 300px"></el-input>
         </div>
-        <div class="device-row">
+        <div class="device-row" v-show="yibiaoShow">
           <div class="title">仪表回路</div>
           <div class="button-box">
             <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px"></el-button>
@@ -20,13 +20,30 @@
             <el-button type="danger" icon="el-icon-close" size="mini"></el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 80%">
+        <el-table :data="yibiaoData" style="width: 80%" v-show="yibiaoShow">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="date" label="设备类型" width="400"> </el-table-column>
-          <el-table-column prop="name" label="形状" width="400"> </el-table-column>
-          <el-table-column prop="address" label="是否诊断条件"> </el-table-column>
+          <el-table-column prop="deviceTypeName" label="设备类型" width="400"> </el-table-column>
+          <el-table-column label="形状" width="400">
+            <template slot-scope="scope">
+              <select v-if="scope.row.shape == 1" class="form-control">
+                <option value="圆形" selected>圆形</option>
+                <option value="矩形">矩形</option>
+              </select>
+              <select v-if="scope.row.shape == 2" class="form-control">
+                <option value="圆形">圆形</option>
+                <option value="矩形" selected>矩形</option>
+              </select>
+              <!-- </el-select> -->
+            </template>
+          </el-table-column>
+          <el-table-column label="是否诊断条件">
+            <template slot-scope="scope">
+              <el-checkbox v-if="scope.row.isCheck == 0"></el-checkbox>
+              <el-checkbox v-if="scope.row.isCheck == 1" v-model="checked"></el-checkbox>
+            </template>
+          </el-table-column>
         </el-table>
-        <div class="device-row">
+        <div class="device-row" v-show="tagShow">
           <div class="title">TAG类型</div>
           <div class="button-box">
             <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px" @click="dialogVisible = true"></el-button>
@@ -34,13 +51,27 @@
             <el-button type="danger" icon="el-icon-close" size="mini"></el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 80%; margin-bottom: 30px">
+        <el-table :data="tagData" style="width: 80%; margin-bottom: 30px" v-show="tagShow">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="date" label="TAG名" width="400"> </el-table-column>
-          <el-table-column prop="name" label="TAG描述" width="400"> </el-table-column>
-          <el-table-column prop="address" label="判断条件"> </el-table-column>
+          <el-table-column prop="tagConfigName" label="TAG名" width="200"> </el-table-column>
+          <el-table-column prop="tagConfigDesc" label="TAG描述" width="200"> </el-table-column>
+          <el-table-column label="判断条件">
+            <template slot-scope="scope">
+              <el-table :data="scope.row.values" style="width: 100%; border: 0px; margin: 0">
+                <el-table-column prop="enumValue" label="条件" width="300">
+                  <template slot-scope="scope">
+                    <span v-if="scope.row.enumValue != null" v-text="'PV=' + scope.row.enumValue"></span>
+                    <span v-if="scope.row.enumValue == null && scope.row.maxValue != null && scope.row.minValue != null" v-text="scope.row.minValue + ' < ' + 'PV' + ' ≤ ' + scope.row.maxValue"></span>
+                    <span v-if="scope.row.enumValue == null && scope.row.maxValue != null && scope.row.minValue == null" v-text="'PV' + ' ≤ ' + scope.row.maxValue"></span>
+                    <span v-if="scope.row.enumValue == null && scope.row.maxValue == null && scope.row.minValue != null" v-text="scope.row.minValue + ' < ' + 'PV'"></span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="valueDesc" label="故障类型"> </el-table-column>
+              </el-table>
+            </template>
+          </el-table-column>
         </el-table>
-        <div class="device-row">
+        <div class="device-row" v-show="yibiaoShow">
           <div class="title">诊断条件</div>
           <div class="button-box">
             <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px" @click="dialogVisible1 = true"></el-button>
@@ -48,10 +79,11 @@
             <el-button type="danger" icon="el-icon-close" size="mini"></el-button>
           </div>
         </div>
-        <el-table :data="tableData" style="width: 80%; margin-bottom: 30px">
-          <el-table-column prop="date" label="日期" width="180"> </el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-          <el-table-column prop="address" label="地址"> </el-table-column>
+        <el-table :data="this.diagData" style="width: 80%; margin-bottom: 30px" v-show="yibiaoShow">
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column v-for="item in this.diagTableTh" :key="item.id" :prop="item.tagValues" :label="item.deviceTypeName" :formatter="tagValueData"> </el-table-column>
+          <el-table-column prop="description" label="初步结论" :formatter="resultData"> </el-table-column>
+          <el-table-column prop="advice" label="指导建议"> </el-table-column>
         </el-table>
         <el-dialog :visible.sync="dialogVisible" width="40%" title="TAG类型">
           <el-form style="margin-left: 20px" label-width="80px" label-position="left">
@@ -132,95 +164,141 @@
 </template>
 
 <script>
+import { subList, list, getTagConfig, getRecycleConfig, diagnosisList } from '@/api/autocontrol'
 export default {
   name: 'Setting-technology',
   data() {
     return {
       tData: {},
+
+      checked: true,
+      sigShow: false,
+      yibiaoShow: false,
+      tagShow: false,
       inputData: '',
       dialogVisible: false,
       dialogVisible1: false,
-      treeData: [
-        {
-          id: 1,
-          label: '盘台',
-          children: [
-            {
-              id: 11,
-              label: '按钮'
-            },
-            {
-              id: 12,
-              label: '保险端子'
-            },
-            {
-              id: 13,
-              label: '电源冗余模块'
-            },
-            {
-              id: 14,
-              label: '浪涌保护器'
-            },
-            {
-              id: 4,
-              label: '声光报警器'
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: 'PLC',
-          children: [
-            {
-              id: 5,
-              label: '电源模块'
-            },
-            {
-              id: 6,
-              label: '模拟量输入模块AIM'
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: '现场设备',
-          children: [
-            {
-              id: 7,
-              label: '开关量输入设备'
-            },
-            {
-              id: 8,
-              label: '差压变送器'
-            }
-          ]
-        },
-        {
-          id: 4,
-          label: 'IT设备',
-          children: [
-            {
-              id: 5,
-              label: '安全设备'
-            },
-            {
-              id: 6,
-              label: '服务器'
-            }
-          ]
-        }
-      ],
+      listData: [],
+      treeAllData: [],
+      tagData: [],
+      yibiaoData: [],
+      yibiaoDataAll: [],
+      tableIndex: [],
+      diagData: [],
+      diagTableTh: [],
+      diagTableData: [],
+      treeData: [],
       defaultProps: {
         children: 'children',
         label: 'label'
       }
     }
   },
+  created() {
+    //this.subList()
+    this.list()
+  },
+  computed: {},
   methods: {
-    handleNodeClick(data) {
+    async handleNodeClick(data) {
       this.tData = data
       this.inputData = this.tData.label
-      console.log(this.inputData)
+      const res = await subList(data.id)
+      if (data.pid == 1) {
+        this.tagShow = false
+        this.yibiaoShow = false
+        this.sigShow = false
+      }
+      if (data.pid == 2 || data.pid == 3) {
+        const res = await getTagConfig(data.id)
+        this.tagData = res.data
+        if (data.pid == 2) {
+          this.getPantai()
+        }
+      }
+      if (data.pid == 3) {
+        const res = await getRecycleConfig(data.id)
+        const diagres = await diagnosisList(data.id)
+        this.diagData = diagres.data
+
+        this.yibiaoData = res.data
+
+        this.getTableTh()
+        this.getDevice()
+      } else this.getParent(data.pid)
+    },
+    async subList() {
+      const res = await subList()
+      //this.listData = res.data
+    },
+    async list() {
+      const res = await list()
+      this.treeAllData = res.data
+      this.treeData = this.getTree(this.treeAllData, 0)
+      console.log(111)
+      console.log(this.treeData)
+    },
+
+    getTree(treeData, parentId) {
+      var treeArr = []
+      for (var i = 0; i < treeData.length; i++) {
+        var node = treeData[i]
+        if (node.pid == parentId) {
+          var newNode = { id: node.id, label: node.name, children: this.getTree(treeData, node.id), pid: node.pid, isRemind: node.isRemind, relatedId: node.relatedId }
+          treeArr.push(newNode)
+        }
+      }
+      // console.log(treeArr)
+      return treeArr
+    },
+    getParent(id) {},
+    getPantai() {
+      this.tagShow = true
+      this.yibiaoShow = false
+      this.sigShow = false
+    },
+    getIT() {},
+    getDevice() {
+      this.yibiaoShow = true
+      this.sigShow = true
+      this.tagShow = true
+    },
+    getTableTh() {
+      if (this.yibiaoData.length == 0) {
+        this.diagTableTh = []
+        this.tableIndex = []
+      } else {
+        this.diagTableTh = []
+        this.tableIndex = []
+        for (var i = 0; i < this.yibiaoData.length; i++) {
+          if (this.yibiaoData[i].isCheck == 1) {
+            this.diagTableTh.push(this.yibiaoData[i])
+            this.tableIndex.push(this.yibiaoData[i].deviceTypeName)
+          }
+        }
+      }
+      // console.log(this.diagTableTh)
+    },
+    getTableData() {
+      for (var i = 0; i < this.diagTableData.length; i++) {}
+      this.diagTableData
+    },
+
+    resultData(row) {
+      let arr = []
+      row.results.forEach((item, index) => {
+        return arr.push(item.description)
+      })
+
+      return arr.join(',')
+    },
+    tagValueData(row, column) {
+      var tagList = row.tagValues
+
+      var ix = this.tableIndex.indexOf(column.label)
+      console.log(ix)
+      if (ix == -1 || ix >= tagList.length) return
+      return tagList[ix].errorDesc == null ? '正常' : tagList[ix].errorDesc
     }
   }
 }
@@ -230,6 +308,22 @@ export default {
 .content-container {
   background-color: #fff;
 }
+.form-control {
+  display: block;
+  width: 60%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
 .tree-table-container {
   display: flex;
   justify-content: space-between;

@@ -214,7 +214,7 @@ export default {
       ],
       value: '',
       tableData: [
-        {
+        /*  {
           id: '1',
           name: '硬盘录像机',
           class: '设备1',
@@ -273,8 +273,18 @@ export default {
           datestart: '2002-02-21',
           dateend: '2020-02-21',
           datenext: '2050-02-01'
-        }
+        } */
       ]
+    }
+  },
+
+  created() {
+    this.alarmList()
+  },
+  methods: {
+    async alarmList() {
+      const res = await alarmList(1)
+      this.tableData = res.data
     }
   }
 }

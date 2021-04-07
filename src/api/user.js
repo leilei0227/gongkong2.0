@@ -1,4 +1,21 @@
 import request from '@/utils/request'
+export function userList(data) {
+    return request({
+        url: '/api/user/list.json',
+        method: 'post',
+        data
+    })
+}
+
+export function updateUser(userId) {
+    return request({
+        url: '/api/user/getUser.json',
+        method: 'post',
+        data: { userId }
+    })
+}
+
+//原始
 export function fetchList(query) {
     return request({
         url: '/user/getAuth.json',
@@ -15,13 +32,13 @@ export function createUser(data) {
     })
 }
 
-export function updateUser(userId, data) {
+/* export function updateUser(userId, data) {
     return request({
         url: `/api/user/${userId}`,
         method: 'put',
         data
     })
-}
+} */
 
 export function deleteUser(query) {
     return request({

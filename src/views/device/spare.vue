@@ -2,8 +2,8 @@
   <div class="content-container">
     <div class="box-table">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="class" label="设备种类" width="200"> </el-table-column>
-        <el-table-column prop="totalnum" label="总数" width="130"> </el-table-column>
+        <el-table-column prop="typeName" label="设备种类" width="200"> </el-table-column>
+        <el-table-column prop="count" label="总数" width="130"> </el-table-column>
         <el-table-column prop="yunxing" label="运行" width="130"> </el-table-column>
         <el-table-column prop="beijian" label="备件" width="130"> </el-table-column>
         <el-table-column prop="jianding" label="检定" width="130"> </el-table-column>
@@ -11,7 +11,7 @@
         <el-table-column prop="bad" label="维修" width="130"> </el-table-column>
         <el-table-column prop="bili" label="备用比例" width="150"> </el-table-column>
         <el-table-column prop="downline" label="备件下限" width="150"> </el-table-column>
-        <el-table-column prop="address" label="存放地点" width="130"> </el-table-column>
+        <el-table-column prop="location" label="存放地点" width="130"> </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="{ row }">
             <el-button size="mini" @click="handleEdit(row)">配置</el-button>
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { storageLimit } from '@/api/device'
 export default {
   name: 'Device-spare',
 
@@ -57,7 +58,7 @@ export default {
         address: ''
       },
       tableData: [
-        {
+        /*    {
           class: '服务器',
           totalnum: '7',
           yunxing: '0',
@@ -116,9 +117,12 @@ export default {
           bili: '100%',
           downline: '-',
           address: '501'
-        }
+        } */
       ]
     }
+  },
+  created() {
+    this.storageLimit()
   },
   methods: {
     updateData() {
@@ -135,6 +139,10 @@ export default {
       this.$nextTick(() => {
         this.$refs['form'].clearValidate()
       })
+    },
+    async storageLimit() {
+      const res = await storageLimit()
+      this.tableData = res.data
     }
   }
 }

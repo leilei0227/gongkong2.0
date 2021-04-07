@@ -43,14 +43,14 @@
       </div>
       <div class="table-box">
         <el-table :data="tableData" border style="width: 100%">
-          <el-table-column prop="date" label="故障时间" width="200"> </el-table-column>
-          <el-table-column prop="class" label="设备类型" width="200"> </el-table-column>
-          <el-table-column prop="id" label="设备" width="120"> </el-table-column>
+          <el-table-column prop="createTime" label="故障时间" width="200" :formatter="dataChange"> </el-table-column>
+          <el-table-column prop="deviceTypeName" label="设备类型" width="200"> </el-table-column>
+          <el-table-column prop="deviceName" label="设备" width="120"> </el-table-column>
 
-          <el-table-column prop="repair" label="故障类型" width="200"> </el-table-column>
-          <el-table-column prop="confirm" label="确认人员" width="150"> </el-table-column>
+          <el-table-column prop="tagDesc" label="故障类型" width="200"> </el-table-column>
+          <el-table-column prop="username" label="确认人员" width="150"> </el-table-column>
           <el-table-column prop="result" label="结论" width="150"> </el-table-column>
-          <el-table-column prop="reason" label="故障原因" width="200"> </el-table-column>
+          <el-table-column prop="errorReason" label="故障原因" width="200"> </el-table-column>
 
           <el-table-column label="操作">
             <template>
@@ -70,6 +70,8 @@
 
 <script>
 import LineChart from '@/components/Charts/LineChart'
+import { parseTime } from '@/utils'
+import { errorList } from '@/api/analysis'
 export default {
   name: 'Analysis-device',
   components: {
@@ -77,6 +79,7 @@ export default {
   },
   data() {
     return {
+      createTim: '',
       linedata: [
         { name: '协议分析', value: 30 },
         { name: '木马攻击', value: 20 },
@@ -98,35 +101,21 @@ export default {
         date1: '',
         date2: ''
       },
-      tableData: [
-        {
-          date: '2020-02-21 21:25:38',
-          class: '硬盘录像机',
-          id: '设备1',
-          repair: 'CPU超限',
-          confirm: '管理员',
-          result: '其他',
-          reason: 'XXXXXXXXX'
-        },
-        {
-          date: '2020-02-21 21:25:38',
-          class: '硬盘录像机',
-          id: '设备1',
-          repair: 'CPU超限',
-          confirm: '管理员',
-          result: '其他',
-          reason: 'XXXXXXXXX'
-        },
-        {
-          date: '2020-02-21 21:25:38',
-          class: '硬盘录像机',
-          id: '设备1',
-          repair: 'CPU超限',
-          confirm: '管理员',
-          result: '其他',
-          reason: 'XXXXXXXXX'
-        }
-      ]
+      tableData: []
+    }
+  },
+  created() {
+    this.errorList()
+  },
+  methods: {
+    async errorList() {
+      const res = await errorList()
+      this.tableData = res.data
+    },
+    dataChange(row) {
+      return parseTime(new Date(row.createTime), '{y}-{m}-{d} {h}:{i}:{s}')
+      // var rdata = row
+      // console.log(rdata)
     }
   }
 }

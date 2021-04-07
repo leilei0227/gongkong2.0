@@ -6,7 +6,7 @@
           <img src="~@/assets/img/login/u176.png" />
         </div>
         <div class="box-text">
-          <div class="box-num"><span v-text="'233'" /></div>
+          <div class="box-num"><span v-text="this.siteNum" /></div>
           <div class="box-title"><span v-text="'组织数量'" /></div>
         </div>
       </div>
@@ -15,7 +15,7 @@
           <img src="~@/assets/img/login/u173.png" />
         </div>
         <div class="box-text">
-          <div class="box-num"><span v-text="'233'" /></div>
+          <div class="box-num"><span v-text="this.deviceNum" /></div>
           <div class="box-title"><span v-text="'设备数量'" /></div>
         </div>
       </div>
@@ -24,7 +24,7 @@
           <img src="~@/assets/img/login/u171.png" />
         </div>
         <div class="box-text">
-          <div class="box-num"><span v-text="'16'" /></div>
+          <div class="box-num"><span v-text="this.errorNum" /></div>
           <div class="box-title"><span v-text="'故障数量'" /></div>
         </div>
       </div>
@@ -33,10 +33,10 @@
       <div class="c-map">
         <div class="con-title">
           <span>场站分布</span>
-          <el-button type="primary" icon="el-icon-refresh" style="height: 25px; width: 95px; padding: 0px">最初大小</el-button>
+          <el-button type="primary" icon="el-icon-refresh" style="height: 25px; width: 95px; padding: 0px" @click="mapsize()">最初大小</el-button>
         </div>
         <div class="map-box">
-          <el-map></el-map>
+          <el-map :change="this.Mapsize" :listdata="this.listData" v-if="this.listData.length"></el-map>
         </div>
       </div>
       <div class="c-list">
@@ -45,9 +45,9 @@
         </div>
         <div class="table-box">
           <el-table :data="tableData" stripe style="width: 100%">
-            <el-table-column prop="company" label="区域公司名" width="180"> </el-table-column>
-            <el-table-column prop="project" label="项目公司数" width="180"> </el-table-column>
-            <el-table-column prop="fix" label="运维场站数"> </el-table-column>
+            <el-table-column prop="areaUnitName" label="区域公司名" width="180"> </el-table-column>
+            <el-table-column prop="projectUnitNum" label="项目公司数" width="180"> </el-table-column>
+            <el-table-column prop="siteUnitNum" label="运维场站数"> </el-table-column>
           </el-table>
         </div>
       </div>
@@ -58,6 +58,8 @@
 <script>
 import Map from './components/mapshow'
 import { fetchList } from '@/api/deviceType'
+import { subList, statistics, getAuth } from '@/api/dashboard'
+
 export default {
   name: 'Dashboard',
   components: {
@@ -65,42 +67,39 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-          company: '海南分公司',
-          project: '1106',
-          fix: '1064'
-        },
-        {
-          company: '上海分公司',
-          project: '50',
-          fix: '50'
-        },
-        {
-          company: '黑龙江分公司',
-          project: '43',
-          fix: '35'
-        },
-        {
-          company: '山东分公司',
-          project: '33',
-          fix: '27'
-        },
-        {
-          company: '试验平台',
-          project: '32',
-          fix: '28'
-        }
-      ]
+      zoomSize: 0,
+      deviceNum: 0,
+      siteNum: 0,
+      errorNum: 0,
+      Mapsize: 0,
+      tableData: [],
+      listData: []
     }
   },
   created() {
-    // this.fetchList()
+    this.getAuth()
+    this.subList()
+    this.statistics()
   },
   methods: {
-    async fetchList() {
-      const res = await fetchList()
+    async getAuth() {
+      const res = await getAuth()
       console.log(res)
+    },
+    async subList() {
+      const res = await subList()
+      this.listData = res.data
+    },
+    async statistics() {
+      const res = await statistics()
+      this.deviceNum = res.data.deviceNum
+      this.siteNum = res.data.siteNum
+      this.errorNum = res.data.errorNum
+      this.tableData = res.data.unitStat
+      // console.log(typeof this.tableData)
+    },
+    mapsize() {
+      this.Mapsize = this.Mapsize + 1
     }
   }
 }

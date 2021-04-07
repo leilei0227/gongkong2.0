@@ -17,17 +17,17 @@
         </div>
       </div>
       <el-table :data="tableData" border style="width: 98%" :cell-style="{ 'text-align': 'center' }" :header-cell-style="{ 'text-align': 'center' }">
-        <el-table-column prop="id" label="故障时间" width="180"> </el-table-column>
-        <el-table-column prop="name" label="设备名称" width="160">
+        <el-table-column prop="createTime" label="故障时间" width="180" :formatter="parsetime"> </el-table-column>
+        <el-table-column prop="deviceName" label="设备名称" width="160">
           <!-- <template slot-scope="scope"> -->
           <!-- <a @click="dialogPvVisible = true" style="color: blue; cursor: pointer">{{ scope.row.name }}</a> -->
           <!-- </template> -->
         </el-table-column>
-        <el-table-column prop="sqid" label="设备类型" width="100"> </el-table-column>
-        <el-table-column prop="linsec" label="故障类型" width="100"> </el-table-column>
-        <el-table-column prop="address" label="确认人员" width="100"> </el-table-column>
-        <el-table-column prop="version" label="结论" width="180"> </el-table-column>
-        <el-table-column prop="message" label="故障原因" width="180"> </el-table-column>
+        <el-table-column prop="deviceTypeName" label="设备类型" width="100"> </el-table-column>
+        <el-table-column prop="errorDesc" label="故障类型" width="100"> </el-table-column>
+        <el-table-column prop="username" label="确认人员" width="100"> </el-table-column>
+        <el-table-column prop="result" label="结论" width="180"> </el-table-column>
+        <el-table-column prop="errorReason" label="故障原因" width="180"> </el-table-column>
         <el-table-column label="操作">
           <template>
             <el-button type="text">确认 </el-button>
@@ -85,6 +85,9 @@
 </template>
 
 <script>
+import { errorList, confirmError, saveResult, getForm } from '@/api/monitor'
+import { parseTime } from '@/utils'
+//import { errorList } from '@/api/analysis'
 export default {
   name: 'Monitor-autocontrol',
   data() {
@@ -189,7 +192,7 @@ export default {
         label: 'label'
       },
       tableData: [
-        {
+        /* {
           id: '2021-01-01 20:20:20',
           name: '防火墙1',
           sqid: '类型1',
@@ -233,11 +236,25 @@ export default {
           address: '管理员',
           version: 'V1.1.0.6.15',
           message: '上次未升级'
-        }
+        } */
       ]
     }
   },
+  created() {
+    this.errorList()
+  },
   methods: {
+    async errorList() {
+      const res = await errorList()
+      this.tableData = res.data
+      // var time = res.data.createTime
+
+      console.log(parseTime(res.data[0].createTime))
+    },
+    parsetime(row, column) {
+      var date = row[column.property]
+      return parseTime(date)
+    },
     handleNodeClick(data) {}
   }
 }
