@@ -7,44 +7,70 @@ export function userList(data) {
     })
 }
 
-export function updateUser(userId) {
-    return request({
-        url: '/api/user/getUser.json',
-        method: 'post',
-        data: { userId }
-    })
-}
-
 //原始
 export function fetchList(query) {
     return request({
-        url: '/user/getAuth.json',
+        url: 'api/user/list.json',
         method: 'get',
         params: query
     })
 }
 
-export function createUser(data) {
+export function createUser(
+    unitId,
+    username,
+    role,
+    realName,
+    phone,
+    dutyStatus,
+    userType,
+) {
     return request({
-        url: '/api/user',
+        url: `/api/user/saveUser.json`,
         method: 'post',
-        data
+        data: {
+            unitId,
+            username,
+            role,
+            realName,
+            phone,
+            dutyStatus,
+            userType,
+
+        }
     })
 }
 
-/* export function updateUser(userId, data) {
-    return request({
-        url: `/api/user/${userId}`,
-        method: 'put',
-        data
-    })
-} */
 
-export function deleteUser(query) {
+export function updateUser(unitId,
+    username,
+    role,
+    realName,
+    phone,
+    dutyStatus,
+    userType,
+    id) {
     return request({
-        url: '/api/user',
-        method: 'delete',
-        params: query
+        url: `/api/user/saveUser.json`,
+        method: 'post',
+        data: {
+            unitId,
+            username,
+            role,
+            realName,
+            phone,
+            dutyStatus,
+            userType,
+            id
+        }
+    })
+}
+
+export function deleteUser(userId) {
+    return request({
+        url: '/api/user/del.json',
+        method: 'post',
+        data: { userId }
     })
 }
 export function login(data) {

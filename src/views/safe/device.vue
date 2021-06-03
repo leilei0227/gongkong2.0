@@ -375,6 +375,7 @@ export default {
 .content-container {
   background-color: #fff;
   .dialog-t {
+    font: 14;
     width: 98%;
     display: flex;
     justify-content: space-between;

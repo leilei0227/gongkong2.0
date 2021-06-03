@@ -1,37 +1,37 @@
 <template>
   <div class="content-container">
-    <div class="content-but">
+    <!-- <div class="content-but">
       <div class="box-select">
         <el-select v-model="value" placeholder="请选择" style="width: 180px; margin-right: 10px">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
         </el-select>
         <el-input v-model="input" style="width: 200px; margin-right: 10px" placeholder="请输入内容"></el-input>
         <el-button type="primary" style="width: 50px; height: 40px" icon="el-icon-search"></el-button>
-      </div>
-    </div>
+      </div> 
+    </div> -->
     <div class="content-table">
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column prop="id" label="#" width="150"> </el-table-column>
-        <el-table-column prop="name" label="系统设备名" width="150">
-          <template slot-scope="scope">
+        <el-table-column prop="deviceName" label="系统设备名" width="150">
+          <!-- <template slot-scope="scope">
             <a @click="dialogTableVisible = true" style="color: #409eff; cursor: pointer">{{ scope.row.name }}</a>
-          </template></el-table-column
-        >
-        <el-table-column prop="class" label="设备种类" width="130"> </el-table-column>
-        <el-table-column prop="producer" label="生产厂商" width="130"> </el-table-column>
-        <el-table-column prop="brand" label="品牌系列" width="150"> </el-table-column>
-        <el-table-column prop="isoid" label="规格型号" width="150"> </el-table-column>
-        <el-table-column prop="sqid" label="序列号" width="150"> </el-table-column>
-        <el-table-column prop="datestart" label="检定开始时间" width="150"> </el-table-column>
-        <el-table-column prop="dateend" label="检定结束时间" width="150"> </el-table-column>
-        <el-table-column prop="datenext" label="下次检定时间" width="150"> </el-table-column>
-        <el-table-column label="操作" width="150">
-          <template>
-            <el-button type="text" plain @click="dialogVisible = true">设备检定</el-button>
-          </template>
+          </template> -->
         </el-table-column>
+        <el-table-column prop="firm.deviceName" label="设备种类" width="130"> </el-table-column>
+        <el-table-column prop="firm.name" label="生产厂商" width="130"> </el-table-column>
+        <el-table-column prop="firm.brand" label="品牌系列"> </el-table-column>
+        <el-table-column prop="firm.pattern" label="规格型号"> </el-table-column>
+        <el-table-column prop="firm.number" label="序列号"> </el-table-column>
+
+        <el-table-column prop="firm.createTime" label="维护开始时间" :formatter="dateFormat"> </el-table-column>
+        <el-table-column prop="firm.expiredTime" label="下次维护时间" :formatter="dateFormat"> </el-table-column>
+        <!-- <el-table-column label="操作" width="150">
+          <template>
+            <el-button type="text" plain @click="dialogVisible = true">设备维护</el-button>
+          </template>
+        </el-table-column> -->
       </el-table>
-      <el-dialog :visible.sync="dialogTableVisible" width="1500px">
+      <!-- <el-dialog :visible.sync="dialogTableVisible" width="1500px">
         <div class="dialog-title">厂商</div>
         <el-form ref="form" style="padding-top: 10px; padding-bottom: 10px">
           <el-form-item>
@@ -178,13 +178,13 @@
       </el-dialog>
       <el-dialog :visible.sync="dialogVisible" width="800px">
         <el-form ref="form" label-width="100px">
-          <el-form-item label="检定开始时间">
+          <el-form-item label="维护开始时间">
             <el-input v-model="form.startTime"></el-input>
           </el-form-item>
-          <el-form-item label="检定结束时间">
+          <el-form-item label="维护结束时间">
             <el-input v-model="form.endTime"></el-input>
           </el-form-item>
-          <el-form-item label="检定记录">
+          <el-form-item label="维护记录">
             <el-input type="textarea" v-model="form.desc"></el-input>
           </el-form-item>
           <el-form-item>
@@ -192,12 +192,14 @@
             <el-button @click="dialogVisible = false">取消</el-button>
           </el-form-item>
         </el-form>
-      </el-dialog>
+      </el-dialog> -->
     </div>
   </div>
 </template>
 
 <script>
+import { alarmList } from '@/api/device'
+import { parseTime } from '@/utils'
 export default {
   name: 'Device-list',
   data() {
@@ -285,6 +287,17 @@ export default {
     async alarmList() {
       const res = await alarmList(1)
       this.tableData = res.data
+    },
+    dateFormat(row, column) {
+      let timeTemp
+      if (column.property == 'firm.createTime') {
+        timeTemp = row.firm.createTime
+      } else if (column.property == 'firm.expiredTime') {
+        timeTemp = row.firm.expiredTime
+      }
+      // console.log(timeTemp)
+      let result = parseTime(timeTemp, '{y}-{m}-{d}')
+      return result
     }
   }
 }

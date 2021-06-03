@@ -46,12 +46,12 @@
         <div class="device-row" v-show="tagShow">
           <div class="title">TAG类型</div>
           <div class="button-box">
-            <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px" @click="dialogVisible = true"></el-button>
-            <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
-            <el-button type="danger" icon="el-icon-close" size="mini"></el-button>
+            <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px" @click="handleCreate()"></el-button>
+            <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleUpdate()"></el-button>
+            <el-button type="danger" icon="el-icon-close" size="mini" @click="handleDelete()"></el-button>
           </div>
         </div>
-        <el-table :data="tagData" style="width: 80%; margin-bottom: 30px" v-show="tagShow">
+        <el-table :data="tagData" style="width: 80%; margin-bottom: 30px" v-show="tagShow" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="tagConfigName" label="TAG名" width="200"> </el-table-column>
           <el-table-column prop="tagConfigDesc" label="TAG描述" width="200"> </el-table-column>
@@ -85,12 +85,12 @@
           <el-table-column prop="description" label="初步结论" :formatter="resultData"> </el-table-column>
           <el-table-column prop="advice" label="指导建议"> </el-table-column>
         </el-table>
-        <el-dialog :visible.sync="dialogVisible" width="40%" title="TAG类型">
-          <el-form style="margin-left: 20px" label-width="80px" label-position="left">
-            <el-form-item label="TAG名">
-              <el-input style="width: 60%"></el-input>
+        <el-drawer size="50%" :visible.sync="dialogVisible" width="40%" title="TAG类型">
+          <el-form ref="dataForm" :model="temp" style="margin-left: 20px" label-width="80px" label-position="left">
+            <el-form-item label="TAG名" prop="tagConfigName">
+              <el-input style="width: 60%" v-model="temp.tagConfigName"></el-input>
             </el-form-item>
-            <el-form-item label="描述"> <el-input style="width: 60%"></el-input> </el-form-item>
+            <el-form-item label="描述" prop="tagConfigDesc"> <el-input style="width: 60%" v-model="temp.tagConfigDesc"></el-input> </el-form-item>
             <el-form-item label="值类型">
               <el-radio-group>
                 <el-radio label="范围"></el-radio>
@@ -106,12 +106,12 @@
               </el-table>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" style="margin-left: 30%">保存</el-button>
+              <el-button type="primary" style="margin-left: 30%" @click="dialogStatus === 'create' ? createData() : updateData()">保存</el-button>
               <el-button>取消</el-button>
             </el-form-item>
           </el-form>
-        </el-dialog>
-        <el-dialog :visible.sync="dialogVisible1" title="诊断条件" width="40%">
+        </el-drawer>
+        <el-drawer size="50%" :visible.sync="dialogVisible1" title="诊断条件" width="40%">
           <el-form label-width="180px" label-position="right">
             <el-form-item label="test_type">
               <el-select placeholder="请选择活动区域">
@@ -157,14 +157,15 @@
               <el-button>取消</el-button>
             </el-form-item>
           </el-form>
-        </el-dialog>
+        </el-drawer>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { subList, list, getTagConfig, getRecycleConfig, diagnosisList } from '@/api/autocontrol'
+import { subList, list, getTagConfig, getTagConfigs, getRecycleConfig, diagnosisList, addTagType, delTagConfig, diagnosisdel } from '@/api/autocontrol'
+import g from 'file-saver'
 export default {
   name: 'Setting-technology',
   data() {
@@ -188,9 +189,24 @@ export default {
       diagTableTh: [],
       diagTableData: [],
       treeData: [],
+      textMap: {
+        create: '新建',
+        update: '编辑'
+      },
       defaultProps: {
         children: 'children',
         label: 'label'
+      },
+      dialogStatus: '',
+      multipleSelection: [],
+      temp_val: 0,
+      devive_val: 0,
+      tempId: 0,
+      temp: {
+        id: undefined,
+        deviceTypeId: undefined,
+        tagConfigName: '',
+        tagConfigDesc: ''
       }
     }
   },
@@ -204,39 +220,35 @@ export default {
       this.tData = data
       this.inputData = this.tData.label
       const res = await subList(data.id)
-      if (data.pid == 1) {
+      this.tempId = data.id
+      if (data.pid == 1 || data.pid == 40) {
         this.tagShow = false
         this.yibiaoShow = false
         this.sigShow = false
-      }
-      if (data.pid == 2 || data.pid == 3) {
-        const res = await getTagConfig(data.id)
+      } else {
+        const res = await getTagConfigs(data.id)
         this.tagData = res.data
-        if (data.pid == 2) {
+        if (data.pid == 3) {
+          const res = await getRecycleConfig(data.id)
+          const diagres = await diagnosisList(data.id)
+          this.diagData = diagres.data
+          this.yibiaoData = res.data
+          this.getTableTh()
+          this.getDevice()
+        } else {
           this.getPantai()
         }
       }
-      if (data.pid == 3) {
-        const res = await getRecycleConfig(data.id)
-        const diagres = await diagnosisList(data.id)
-        this.diagData = diagres.data
-
-        this.yibiaoData = res.data
-
-        this.getTableTh()
-        this.getDevice()
-      } else this.getParent(data.pid)
     },
     async subList() {
       const res = await subList()
-      //this.listData = res.data
     },
     async list() {
       const res = await list()
       this.treeAllData = res.data
       this.treeData = this.getTree(this.treeAllData, 0)
-      console.log(111)
-      console.log(this.treeData)
+      //console.log(111)
+      //console.log(this.treeData)
     },
 
     getTree(treeData, parentId) {
@@ -251,13 +263,13 @@ export default {
       // console.log(treeArr)
       return treeArr
     },
-    getParent(id) {},
+    //getParent(id) {},
     getPantai() {
       this.tagShow = true
       this.yibiaoShow = false
       this.sigShow = false
     },
-    getIT() {},
+    // getIT() {},
     getDevice() {
       this.yibiaoShow = true
       this.sigShow = true
@@ -292,13 +304,102 @@ export default {
 
       return arr.join(',')
     },
+
     tagValueData(row, column) {
       var tagList = row.tagValues
 
       var ix = this.tableIndex.indexOf(column.label)
-      console.log(ix)
+      //console.log(ix)
       if (ix == -1 || ix >= tagList.length) return
       return tagList[ix].errorDesc == null ? '正常' : tagList[ix].errorDesc
+    },
+    handleSelectionChange(val) {
+      this.temp_val = 0
+      this.devive_val = 0
+      this.multipleSelection = val
+      if (this.multipleSelection.length) {
+        this.temp_val = this.multipleSelection[0].id
+        // this.temp_val = temp[0].tagConfigId
+        this.devive_val = this.multipleSelection[0].deviceTypeId
+      }
+      console.log(this.multipleSelection)
+    },
+    resetTemp() {
+      this.temp = {
+        // 表单字段
+        id: this.temp_val,
+        deviceTypeId: this.tempId,
+        tagConfigName: '',
+        tagConfigDesc: ''
+        //values[0].type: 1
+        // values[0].maxValue: 11111
+        // values[0].minValue: 111
+        //values[0].valueDesc: 开路报警
+      }
+    },
+    handleFetchTagList(deviceId) {
+      getTagConfigs(deviceId).then((response) => {
+        this.tagData = response.data
+      })
+    },
+    handleCreate() {
+      this.resetTemp()
+      this.dialogStatus = 'create'
+      this.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    createData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          //console.log(11, this.temp)
+          addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc).then(() => {
+            this.dialogVisible = false
+            this.$message.success('创建成功')
+            this.handleFetchTagList(this.temp.deviceTypeId)
+          })
+        }
+      })
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        // console.log(this.temp)
+        if (valid) {
+          const res = getTagConfig(this.temp_val)
+          // this.temp.id = res.data
+          // console.log(121324, this.temp.id, res.data)
+          addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc).then(() => {
+            this.dialogVisible = false
+            this.$message.success('更改成功')
+            this.handleFetchTagList(this.temp.deviceTypeId)
+          })
+        }
+      })
+    },
+    handleUpdate() {
+      //this.temp = Object.assign({}, row) // copy obj
+      this.temp = this.multipleSelection[0]
+      this.dialogStatus = 'update'
+      this.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    handleDelete() {
+      this.$confirm(`你确定要删除吗?`, '提示', {
+        type: 'warning'
+      })
+        .then(() => {
+          delTagConfig(this.temp_val).then((response) => {
+            this.$message.success('删除成功')
+            // subList()
+            this.handleFetchTagList(this.devive_val)
+          })
+        })
+        .catch(() => {
+          this.$message.info('已取消删除')
+        })
     }
   }
 }

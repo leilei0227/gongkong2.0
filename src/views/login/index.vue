@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">登录</h3>
       </div>
 
       <el-form-item prop="username">
@@ -25,8 +25,8 @@
       <el-button :loading="loading" type="primary" style="width: 100%; margin-bottom: 30px" @click.native.prevent="handleLogin">Login</el-button>
 
       <div class="tips">
-        <span style="margin-right: 20px">username: admin</span>
-        <span> password: any</span>
+        <!--  <span style="margin-right: 20px">username: admin</span>
+        <span> password: any</span> -->
       </div>
     </el-form>
   </div>
@@ -89,17 +89,17 @@ export default {
       // this.$refs.loginForm.validate((valid) => {
       //   if (valid) {
       //     this.loading = true
-      // this.$store
-      //   .dispatch('user/login', this.loginForm)
-      //   .then(() => {
-      //     console.log(111111111)
+      //     this.$store
+      //       .dispatch('user/login', this.loginForm)
+      //       .then(() => {
+      //         console.log(111111111)
       this.$router.push({ path: this.redirect || '/dashboard' })
-      //   this.loading = false
-      // })
-      // .catch(() => {
-      //   console.log(2)
-      //   this.loading = false
-      // })
+      //       this.loading = false
+      //     })
+      //     .catch(() => {
+      //       console.log(2)
+      //       this.loading = false
+      //     })
       // } else {
       //   console.log('error submit!!')
       //   return false
@@ -110,8 +110,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
+<style lang="scss" scoped>
+/* 修复input 背景不协调  和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg: #283443;
@@ -126,11 +126,21 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
+  height: 100vh;
+  background-image: url('../../assets/img/login/u1.png'), url('../../assets/img/login/u2.png'), url('../../assets/img/login/u13.png');
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: 0 0, 200px 0, 400px 201px;
+}
+.el-form {
   .el-input {
+    ::v-deep .el-input__inner {
+      background-color: #fff0;
+      border: 1px solid #fff0;
+      color: #fff;
+    }
     display: inline-block;
     height: 47px;
     width: 85%;
-
     input {
       background: transparent;
       border: 0px;
@@ -155,9 +165,7 @@ $cursor: #fff;
     color: #454545;
   }
 }
-</style>
 
-<style lang="scss" scoped>
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;

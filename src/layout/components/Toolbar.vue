@@ -7,7 +7,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
+          <img :src="logoSrc2" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -20,9 +20,12 @@
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
           </a>
-          <el-dropdown-item divided @click.native="logout">
+          <!-- <el-dropdown-item @click="logout1()">
             <span style="display: block">Log Out</span>
-          </el-dropdown-item>
+          </el-dropdown-item> -->
+          <a target="_blank" href="http://localhost:9528/gongkong-new">
+            <el-dropdown-item>Log Out</el-dropdown-item>
+          </a>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -32,12 +35,24 @@
 <script>
 import { title } from '@/settings'
 import logoSrc from '@/assets/img/logo.png'
+import logoSrc2 from '@/assets/dashboard/logo.png'
+import { logout } from '@/api/logout'
 export default {
   name: 'Toolbar',
   data() {
     return {
       title,
-      logoSrc
+      logoSrc,
+      logoSrc2
+    }
+  },
+  methods: {
+    // async logout1() {
+    //   const res = await logout()
+    // }
+    logout1() {
+      console.log(11)
+      this.$$router.replace('/')
     }
   }
 }

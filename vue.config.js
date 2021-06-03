@@ -24,7 +24,7 @@ module.exports = {
      * In most cases please use '/' !!!
      * Detail: https://cli.vuejs.org/config/#publicpath
      */
-    publicPath: '/',
+    publicPath: '/gongkong-new',
     outputDir: 'dist',
     assetsDir: 'static',
     lintOnSave: process.env.NODE_ENV === 'development',
@@ -49,7 +49,7 @@ module.exports = {
                     */
                     '^/api': '/'
                 },
-                headers: { Cookie: 'JSESSIONID= CF73EADEB63F9BECC5F2208617618D6B' }
+                headers: { Cookie: 'JSESSIONID= 90FD478F3E7BE0FBCE1258FB27E49DDC' }
 
                 /*     onProxyRes: function(proxyRes, req, res) {
                         var cookies = proxyRes.headers['set-cookie'];

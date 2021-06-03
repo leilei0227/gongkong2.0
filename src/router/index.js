@@ -41,18 +41,18 @@ export const constantRoutes = [
             import ('@/views/404'),
         hidden: true
     },
-    {
-        path: '/table',
-        component: Layout,
-        redirect: '/table/index',
-        children: [{
-            path: 'index',
-            name: 'Table',
-            component: () =>
-                import ('@/views/table/index'),
-            meta: { title: '表格', icon: 'dashboard' }
-        }]
-    },
+    // {
+    //     path: '/table',
+    //     component: Layout,
+    //     redirect: '/table/index',
+    //     children: [{
+    //         path: 'index',
+    //         name: 'Table',
+    //         component: () =>
+    //             import ('@/views/table/index'),
+    //         meta: { title: '表格', icon: 'dashboard' }
+    //     }]
+    // },
     {
         path: '/',
         component: Login
@@ -70,7 +70,7 @@ export const constantRoutes = [
             meta: { title: '首页', icon: 'dashboard' }
         }]
     },
-    // 可视化
+    //可视化 
     {
         path: '/visualization',
         component: Layout,
@@ -82,14 +82,14 @@ export const constantRoutes = [
                 name: 'Topology',
                 component: () =>
                     import ('@/views/visualization/topology'),
-                meta: { title: '拓扑图', icon: 'table' }
+                meta: { title: '拓扑图' }
             },
             {
                 path: 'threeD',
                 name: 'threeD',
                 component: () =>
                     import ('@/views/visualization/threeD'),
-                meta: { title: '三维展示', icon: 'tree' }
+                meta: { title: '三维展示' }
             }
         ]
     },
@@ -99,34 +99,34 @@ export const constantRoutes = [
         component: Layout,
         redirect: '/monitor/autocontrol',
         name: 'Monitor',
-        meta: { title: '设备监控', icon: 'el-icon-s-help' },
+        meta: { title: '设备监控', icon: 'el-icon-camera-solid' },
         children: [{
                 path: 'autocontrol',
                 name: 'Autocontrol',
                 component: () =>
                     import ('@/views/monitor/autocontrol'),
-                meta: { title: '自控', icon: 'table' }
+                meta: { title: '自控' }
             },
             {
                 path: 'communication',
                 name: 'Communication',
                 component: () =>
                     import ('@/views/monitor/communication'),
-                meta: { title: '通信', icon: 'tree' }
+                meta: { title: '通信' }
             },
             {
                 path: 'electric',
                 name: 'Electric',
                 component: () =>
                     import ('@/views/monitor/electric'),
-                meta: { title: '电气', icon: 'tree' }
+                meta: { title: '电气' }
             },
             {
                 path: 'technology',
                 name: 'Technology',
                 component: () =>
                     import ('@/views/monitor/technology'),
-                meta: { title: '工艺', icon: 'tree' }
+                meta: { title: '工艺' }
             }
         ]
     },
@@ -136,147 +136,113 @@ export const constantRoutes = [
         component: Layout,
         redirect: '/safe/monitor',
         name: 'Safe',
-        meta: { title: '安全管理', icon: 'el-icon-s-help' },
+        meta: { title: '安全管理', icon: 'el-icon-warning' },
         children: [{
                 path: 'monitor',
                 name: 'Safe-monitor',
                 component: () =>
                     import ('@/views/safe/monitor'),
-                meta: { title: '安全监控', icon: 'table' }
+                meta: { title: '安全监控' }
             },
             {
                 path: 'device',
                 name: 'Safe-device',
                 component: () =>
                     import ('@/views/safe/device'),
-                meta: { title: '安全设备', icon: 'tree' }
+                meta: { title: '安全设备' }
             },
             {
                 path: 'event',
                 name: 'Safe-event',
                 component: () =>
                     import ('@/views/safe/event'),
-                meta: { title: '安全事件', icon: 'tree' }
+                meta: { title: '安全事件' }
             },
             {
                 path: 'selfcheck',
                 name: 'Safe-selfcheck',
                 component: () =>
                     import ('@/views/safe/selfcheck'),
-                meta: { title: '安全自查', icon: 'tree' }
+                meta: { title: '安全自查' }
             }
         ]
     },
-    // 巡检管理
+    //巡检管理
     {
         path: '/patrol',
         component: Layout,
         redirect: '/patrol/autocontrol',
         name: 'Patrol',
-        meta: { title: '巡检管理', icon: 'el-icon-s-help' },
+        meta: { title: '巡检管理', icon: 'el-icon-s-check' },
         children: [{
                 path: 'autocontrol',
                 name: 'Autocontrol',
                 component: () =>
                     import ('@/views/patrol/autocontrol'),
-                meta: { title: '自控', icon: 'table' }
+                meta: { title: '自控' }
             },
             {
                 path: 'communication',
                 name: 'Communication',
                 component: () =>
                     import ('@/views/patrol/communication'),
-                meta: { title: '通信', icon: 'tree' }
+                meta: { title: '通信' }
             },
             {
                 path: 'electric',
                 name: 'Electric',
                 component: () =>
                     import ('@/views/patrol/electric'),
-                meta: { title: '电气', icon: 'tree' }
+                meta: { title: '电气' }
             },
             {
                 path: 'technology',
                 name: 'Technology',
                 component: () =>
                     import ('@/views/patrol/technology'),
-                meta: { title: '工艺', icon: 'tree' }
+                meta: { title: '工艺' }
             }
         ]
     },
-    // 设备管理
+    //设备管理
     {
         path: '/device',
         component: Layout,
         redirect: '/device/list',
         name: 'device',
-        meta: { title: '设备管理', icon: 'el-icon-s-help' },
+        meta: { title: '设备管理', icon: 'el-icon-s-management' },
         children: [{
                 path: 'list',
                 name: 'Device-list',
                 component: () =>
                     import ('@/views/device/list'),
-                meta: { title: '设备列表', icon: 'table' }
+                meta: { title: '设备列表' }
             },
             {
                 path: 'maintenance',
                 name: 'Device-maintenance',
                 component: () =>
                     import ('@/views/device/maintenance'),
-                meta: { title: '设备维护', icon: 'tree' }
+                meta: { title: '设备维护' }
             },
             {
                 path: 'verification',
                 name: 'Device-verification',
                 component: () =>
                     import ('@/views/device/verification'),
-                meta: { title: '设备检定', icon: 'tree' }
+                meta: { title: '设备检定' }
             },
             {
                 path: 'spare',
                 name: 'Device-spare',
                 component: () =>
                     import ('@/views/device/spare'),
-                meta: { title: '备件管理', icon: 'tree' }
+                meta: { title: '备件管理' }
             }
         ]
     },
-    // 设备管理
-    // {
-    //   path: '/device',
-    //   component: Layout,
-    //   redirect: '/device/list',
-    //   name: 'device',
-    //   meta: { title: '设备管理', icon: 'el-icon-s-help' },
-    //   children: [
-    //     {
-    //       path: 'list',
-    //       name: 'Device-list',
-    //       component: () => import('@/views/device/list'),
-    //       meta: { title: '设备列表', icon: 'table' }
-    //     },
-    //     {
-    //       path: 'maintenance',
-    //       name: 'Device-maintenance',
-    //       component: () => import('@/views/device/maintenance'),
-    //       meta: { title: '设备维护', icon: 'tree' }
-    //     },
-    //     {
-    //       path: 'verification',
-    //       name: 'Device-verification',
-    //       component: () => import('@/views/device/verification'),
-    //       meta: { title: '设备检定', icon: 'tree' }
-    //     },
-    //     {
-    //       path: 'spare',
-    //       name: 'Device-spare',
-    //       component: () => import('@/views/device/spare'),
-    //       meta: { title: '备件管理', icon: 'tree' }
-    //     }
-    //   ]
-    // },
 
-    // 文档中心
+    //文档中心
     {
         path: '/document',
         component: Layout,
@@ -288,7 +254,7 @@ export const constantRoutes = [
             name: 'Document-index',
             component: () =>
                 import ('@/views/document/index'),
-            meta: { title: '文档中心', icon: 'table' }
+            meta: { title: '文档中心' }
         }]
     },
     // 数据分析
@@ -297,26 +263,28 @@ export const constantRoutes = [
         component: Layout,
         redirect: '/analysis/failure',
         name: 'Analysis',
-        meta: { title: '数据分析', icon: 'el-icon-s-help' },
+        meta: { title: '数据分析', icon: 'el-icon-s-opportunity' },
         children: [{
-            path: 'failure',
-            name: 'Analysis-failure',
-            component: () =>
-                import ('@/views/analysis/failure'),
-            meta: { title: '故障分析', icon: 'table' }
-        }, {
-            path: 'patrol',
-            name: 'Analysis-patrol',
-            component: () =>
-                import ('@/views/analysis/patrol'),
-            meta: { title: '巡检分析', icon: 'table' }
-        }, {
-            path: 'device',
-            name: 'Analysis-device',
-            component: () =>
-                import ('@/views/analysis/device'),
-            meta: { title: '设备分析', icon: 'table' }
-        }]
+                path: 'failure',
+                name: 'Analysis-failure',
+                component: () =>
+                    import ('@/views/analysis/failure'),
+                meta: { title: '故障分析' }
+            },
+            {
+                path: 'patrol',
+                name: 'Analysis-patrol',
+                component: () =>
+                    import ('@/views/analysis/patrol'),
+                meta: { title: '巡检分析' }
+            }, {
+                path: 'device',
+                name: 'Analysis-device',
+                component: () =>
+                    import ('@/views/analysis/device'),
+                meta: { title: '设备分析' }
+            }
+        ]
     },
     // 系统管理
     {
@@ -324,55 +292,55 @@ export const constantRoutes = [
         component: Layout,
         redirect: '/setting/autocontrol',
         name: 'Setting',
-        meta: { title: '系统管理', icon: 'el-icon-s-help' },
+        meta: { title: '系统管理', icon: 'el-icon-s-data' },
         children: [{
                 path: 'autocontrol',
                 name: 'Autocontrol',
                 component: () =>
                     import ('@/views/setting/autocontrol'),
-                meta: { title: '自控', icon: 'table' }
+                meta: { title: '自控' }
             },
             {
                 path: 'communication',
                 name: 'Communication',
                 component: () =>
                     import ('@/views/setting/communication'),
-                meta: { title: '通信', icon: 'tree' }
+                meta: { title: '通信' }
             },
             {
                 path: 'electric',
                 name: 'Electric',
                 component: () =>
                     import ('@/views/setting/electric'),
-                meta: { title: '电气', icon: 'tree' }
+                meta: { title: '电气' }
             },
             {
                 path: 'technology',
                 name: 'Technology',
                 component: () =>
                     import ('@/views/setting/technology'),
-                meta: { title: '工艺', icon: 'tree' }
+                meta: { title: '工艺' }
             },
             {
                 path: 'user',
                 name: 'User',
                 component: () =>
                     import ('@/views/setting/user'),
-                meta: { title: '用户管理', icon: 'tree' }
+                meta: { title: '用户管理' }
             },
             {
                 path: 'org',
                 name: 'Org',
                 component: () =>
                     import ('@/views/setting/org'),
-                meta: { title: '组织管理', icon: 'tree' }
+                meta: { title: '组织管理' }
             },
             {
                 path: 'other',
                 name: 'Other',
                 component: () =>
                     import ('@/views/setting/other'),
-                meta: { title: '其他设置', icon: 'tree' }
+                meta: { title: '其他设置' }
             }
         ]
     },

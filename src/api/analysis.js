@@ -6,3 +6,10 @@ export function errorList(data) {
         data
     })
 }
+export function statistics(deviceTypeIds, startYear, endYear, type) {
+    return request({
+        url: '/api/his/statistics.json',
+        method: 'post',
+        data: { deviceTypeIds, startYear, endYear, type }
+    })
+}
