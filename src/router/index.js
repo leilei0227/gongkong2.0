@@ -95,7 +95,7 @@ export const constantRoutes = [
     },
     // 设备监控
     {
-        path: '/monitor',
+        path: '/monitor/',
         component: Layout,
         redirect: '/monitor/autocontrol',
         name: 'Monitor',
@@ -105,30 +105,30 @@ export const constantRoutes = [
                 name: 'Autocontrol',
                 component: () =>
                     import ('@/views/monitor/autocontrol'),
-                meta: { title: '自控' }
-            },
-            {
-                path: 'communication',
-                name: 'Communication',
-                component: () =>
-                    import ('@/views/monitor/communication'),
-                meta: { title: '通信' }
-            },
-            {
-                path: 'electric',
-                name: 'Electric',
-                component: () =>
-                    import ('@/views/monitor/electric'),
-                meta: { title: '电气' }
-            },
-            {
-                path: 'technology',
-                name: 'Technology',
-                component: () =>
-                    import ('@/views/monitor/technology'),
-                meta: { title: '工艺' }
-            }
-        ]
+                meta: { title: '设备监控' }
+            }, ]
+            //     {
+            //         path: 'communication',
+            //         name: 'Communication',
+            //         component: () =>
+            //             import ('@/views/monitor/communication'),
+            //         meta: { title: '通信' }
+            //     },
+            //     {
+            //         path: 'electric',
+            //         name: 'Electric',
+            //         component: () =>
+            //             import ('@/views/monitor/electric'),
+            //         meta: { title: '电气' }
+            //     },
+            //     {
+            //         path: 'technology',
+            //         name: 'Technology',
+            //         component: () =>
+            //             import ('@/views/monitor/technology'),
+            //         meta: { title: '工艺' }
+            //     }
+            // ]
     },
     // 安全管理
     {
@@ -179,30 +179,30 @@ export const constantRoutes = [
                 name: 'Autocontrol',
                 component: () =>
                     import ('@/views/patrol/autocontrol'),
-                meta: { title: '自控' }
-            },
-            {
-                path: 'communication',
-                name: 'Communication',
-                component: () =>
-                    import ('@/views/patrol/communication'),
-                meta: { title: '通信' }
-            },
-            {
-                path: 'electric',
-                name: 'Electric',
-                component: () =>
-                    import ('@/views/patrol/electric'),
-                meta: { title: '电气' }
-            },
-            {
-                path: 'technology',
-                name: 'Technology',
-                component: () =>
-                    import ('@/views/patrol/technology'),
-                meta: { title: '工艺' }
-            }
-        ]
+                meta: { title: '巡检管理' }
+            }, ]
+            //     {
+            //         path: 'communication',
+            //         name: 'Communication',
+            //         component: () =>
+            //             import ('@/views/patrol/communication'),
+            //         meta: { title: '通信' }
+            //     },
+            //     {
+            //         path: 'electric',
+            //         name: 'Electric',
+            //         component: () =>
+            //             import ('@/views/patrol/electric'),
+            //         meta: { title: '电气' }
+            //     },
+            //     {
+            //         path: 'technology',
+            //         name: 'Technology',
+            //         component: () =>
+            //             import ('@/views/patrol/technology'),
+            //         meta: { title: '工艺' }
+            //     }
+            // ]
     },
     //设备管理
     {

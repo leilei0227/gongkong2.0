@@ -17,32 +17,35 @@
             <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px"></el-button>
             <el-button type="primary" icon="el-icon-upload2" size="mini"></el-button>
             <el-button type="primary" icon="el-icon-download" size="mini"></el-button>
-            <el-button type="danger" icon="el-icon-close" size="mini"></el-button>
+            <el-button type="danger" icon="el-icon-close" size="mini" @click="handleDeleteRoute(index)"></el-button>
           </div>
         </div>
         <el-table :data="yibiaoData" style="width: 80%" v-show="yibiaoShow">
-          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column type="selection" width="55" :selectable="selectable"></el-table-column>
           <el-table-column prop="deviceTypeName" label="设备类型" width="400"> </el-table-column>
           <el-table-column label="形状" width="400">
             <template slot-scope="scope">
-              <select v-if="scope.row.shape == 1" class="form-control">
+              <span v-if="scope.row.shape == 1 && scope.row.sorted == 1">圆形</span>
+              <span v-if="scope.row.shape == 2 && scope.row.sorted == 1">矩形</span>
+
+              <select v-if="scope.row.shape == 1 && scope.row.sorted !== 1" class="form-control">
                 <option value="圆形" selected>圆形</option>
                 <option value="矩形">矩形</option>
               </select>
-              <select v-if="scope.row.shape == 2" class="form-control">
+              <select v-if="scope.row.shape == 2 && scope.row.sorted !== 1" class="form-control">
                 <option value="圆形">圆形</option>
                 <option value="矩形" selected>矩形</option>
               </select>
-              <!-- </el-select> -->
             </template>
           </el-table-column>
           <el-table-column label="是否诊断条件">
             <template slot-scope="scope">
               <el-checkbox v-if="scope.row.isCheck == 0"></el-checkbox>
-              <el-checkbox v-if="scope.row.isCheck == 1" v-model="checked"></el-checkbox>
+              <el-checkbox v-if="scope.row.isCheck == 1" :value="true"></el-checkbox>
             </template>
           </el-table-column>
         </el-table>
+        <el-button style="margin-left: 75%" v-show="yibiaoShow" type="text">保存并预览</el-button>
         <div class="device-row" v-show="tagShow">
           <div class="title">TAG类型</div>
           <div class="button-box">
@@ -74,9 +77,9 @@
         <div class="device-row" v-show="yibiaoShow">
           <div class="title">诊断条件</div>
           <div class="button-box">
-            <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px" @click="dialogVisible1 = true"></el-button>
-            <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
-            <el-button type="danger" icon="el-icon-close" size="mini"></el-button>
+            <el-button type="success" icon="el-icon-plus" size="mini" style="margin-left: 0px" @click="handleCreateDig()"></el-button>
+            <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleUpdateDig()"></el-button>
+            <el-button type="danger" icon="el-icon-close" size="mini" @click="handleDeleteDig()"></el-button>
           </div>
         </div>
         <el-table :data="this.diagData" style="width: 80%; margin-bottom: 30px" v-show="yibiaoShow">
@@ -91,18 +94,18 @@
               <el-input style="width: 60%" v-model="temp.tagConfigName"></el-input>
             </el-form-item>
             <el-form-item label="描述" prop="tagConfigDesc"> <el-input style="width: 60%" v-model="temp.tagConfigDesc"></el-input> </el-form-item>
-            <el-form-item label="值类型">
-              <el-radio-group>
-                <el-radio label="范围"></el-radio>
-                <el-radio label="枚举"></el-radio>
+            <el-form-item label="值类型" prop="">
+              <el-radio-group v-model="radio">
+                <el-radio :label="1">范围</el-radio>
+                <el-radio :label="2">枚举</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="判断条件">
               <el-input style="width: 15%" placeholder="最小值"></el-input><el-input style="width: 15%; margin-left: 10px" placeholder="最大值"></el-input><el-input style="width: 40%; margin-left: 10px" placeholder="故障类型，如：开路报警"></el-input> <el-button type="text">添加</el-button>
               <el-table style="width: 80%; margin-left: 0px; border: 0px">
-                <el-table-column label="条件" width="180"></el-table-column>
-                <el-table-column prop="name" label="故障类型" width="180"> </el-table-column>
-                <el-table-column prop="name" label="操作"> </el-table-column>
+                <el-table-column prop="values[0].enumValue" label="条件" width="180"></el-table-column>
+                <el-table-column prop="values" label="故障类型" width="180"> </el-table-column>
+                <el-table-column prop="desc" label="操作"> </el-table-column>
               </el-table>
             </el-form-item>
             <el-form-item>
@@ -112,7 +115,7 @@
           </el-form>
         </el-drawer>
         <el-drawer size="50%" :visible.sync="dialogVisible1" title="诊断条件" width="40%">
-          <el-form label-width="180px" label-position="right">
+          <el-form ref="dataFormDig" :model="tempDig" label-width="180px" label-position="right">
             <el-form-item label="test_type">
               <el-select placeholder="请选择活动区域">
                 <el-option label="报警" value="baojing"></el-option>
@@ -164,7 +167,7 @@
 </template>
 
 <script>
-import { subList, list, getTagConfig, getTagConfigs, getRecycleConfig, diagnosisList, addTagType, delTagConfig, diagnosisdel } from '@/api/autocontrol'
+import { subList, list, getTagConfig, getTagConfigs, getRecycleConfig, diagnosisList, addTagType, delTagConfig, diagnosisdel, saveRecycleConfigs } from '@/api/autocontrol'
 import g from 'file-saver'
 export default {
   name: 'Setting-technology',
@@ -189,6 +192,7 @@ export default {
       diagTableTh: [],
       diagTableData: [],
       treeData: [],
+      radio: 1,
       textMap: {
         create: '新建',
         update: '编辑'
@@ -206,8 +210,11 @@ export default {
         id: undefined,
         deviceTypeId: undefined,
         tagConfigName: '',
-        tagConfigDesc: ''
-      }
+        tagConfigDesc: '',
+        values: [],
+        desc: ''
+      },
+      tempDig: {}
     }
   },
   created() {
@@ -304,10 +311,16 @@ export default {
 
       return arr.join(',')
     },
+    selectable(row) {
+      if (row.sorted == 1) {
+        return false
+      } else {
+        return true
+      }
+    },
 
     tagValueData(row, column) {
       var tagList = row.tagValues
-
       var ix = this.tableIndex.indexOf(column.label)
       //console.log(ix)
       if (ix == -1 || ix >= tagList.length) return
@@ -322,7 +335,7 @@ export default {
         // this.temp_val = temp[0].tagConfigId
         this.devive_val = this.multipleSelection[0].deviceTypeId
       }
-      console.log(this.multipleSelection)
+      console.log(55555, this.multipleSelection)
     },
     resetTemp() {
       this.temp = {
@@ -330,7 +343,22 @@ export default {
         id: this.temp_val,
         deviceTypeId: this.tempId,
         tagConfigName: '',
-        tagConfigDesc: ''
+        tagConfigDesc: '',
+        // values: []
+        values: [{ enumValue: 1, id: 118, maxValue: null, minValue: null, sorted: 0, tagConfigId: 61, type: 2, valueDesc: '浪涌故障' }]
+        // values[0].type: 1
+        // values[0].maxValue: 11111
+        // values[0].minValue: 111
+        // values[0].valueDesc: 开路报警
+      }
+    },
+    resetTempDig() {
+      this.tempDig = {
+        // 表单字段
+        // id: this.temp_val,
+        // deviceTypeId: this.tempId,
+        // tagConfigName: '',
+        // tagConfigDesc: ''
         //values[0].type: 1
         // values[0].maxValue: 11111
         // values[0].minValue: 111
@@ -344,17 +372,27 @@ export default {
     },
     handleCreate() {
       this.resetTemp()
+
       this.dialogStatus = 'create'
       this.dialogVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    // handleCreateDig() {
+    //   this.resetTempDig()
+    //   this.dialogStatus = 'create'
+    //   this.dialogVisible1 = true
+    //   // this.$nextTick(() => {
+    //   //   this.$refs['dataFormDig'].clearValidate()
+    //   // })
+    // },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          //console.log(11, this.temp)
-          addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc).then(() => {
+          console.log(1122, this.temp)
+
+          addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc, this.temp.values).then(() => {
             this.dialogVisible = false
             this.$message.success('创建成功')
             this.handleFetchTagList(this.temp.deviceTypeId)
@@ -362,6 +400,18 @@ export default {
         }
       })
     },
+    // createDataDig() {
+    //   this.$refs['dataFormDig'].validate((valid) => {
+    //     // if (valid) {
+    //     //console.log(11, this.temp)
+    //     //   addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc).then(() => {
+    //     //     this.dialogVisible = false
+    //     //     this.$message.success('创建成功')
+    //     //     this.handleFetchTagList(this.temp.deviceTypeId)
+    //     //   })
+    //     // }
+    //   })
+    // },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         // console.log(this.temp)
@@ -369,12 +419,27 @@ export default {
           const res = getTagConfig(this.temp_val)
           // this.temp.id = res.data
           // console.log(121324, this.temp.id, res.data)
-          addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc).then(() => {
+          addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc, this.temp.values).then(() => {
             this.dialogVisible = false
             this.$message.success('更改成功')
             this.handleFetchTagList(this.temp.deviceTypeId)
           })
         }
+      })
+    },
+    updateDataDig() {
+      this.$refs['dataFormDig'].validate((valid) => {
+        // console.log(this.temp)
+        // if (valid) {
+        //   const res = getTagConfig(this.temp_val)
+        //   // this.temp.id = res.data
+        //   // console.log(121324, this.temp.id, res.data)
+        //   addTagType(this.temp.id, this.temp.deviceTypeId, this.temp.tagConfigName, this.temp.tagConfigDesc).then(() => {
+        //     this.dialogVisible = false
+        //     this.$message.success('更改成功')
+        //     this.handleFetchTagList(this.temp.deviceTypeId)
+        //   })
+        // }
       })
     },
     handleUpdate() {
@@ -385,6 +450,30 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+    },
+    handleUpdateDig() {
+      //this.temp = Object.assign({}, row) // copy obj
+      // this.temp = this.multipleSelection[0]
+      // this.dialogStatus = 'update'
+      // this.dialogVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
+    },
+    handleDeleteRoute(index) {
+      this.$confirm(`你确定要删除吗?`, '提示', {
+        type: 'warning'
+      })
+        .then(() => {
+          this.yibiaoData.splice(index, 1)
+          this.$message.success('删除成功')
+          // subList()
+          //   this.handleFetchTagList(this.devive_val)
+          // })
+        })
+        .catch(() => {
+          this.$message.info('已取消删除')
+        })
     },
     handleDelete() {
       this.$confirm(`你确定要删除吗?`, '提示', {
@@ -401,6 +490,21 @@ export default {
           this.$message.info('已取消删除')
         })
     }
+    // handleDeleteDig() {
+    //   this.$confirm(`你确定要删除吗?`, '提示', {
+    //     type: 'warning'
+    //   })
+    //     .then(() => {
+    //       diagnosisdel(this.temp_val).then((response) => {
+    //         this.$message.success('删除成功')
+    //         // subList()
+    //         this.handleFetchTagList(this.devive_val)
+    //       })
+    //     })
+    //     .catch(() => {
+    //       this.$message.info('已取消删除')
+    //     })
+    // }
   }
 }
 </script>

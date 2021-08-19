@@ -35,11 +35,11 @@ export function getRecycleConfig(deviceTypeId) {
         data: { deviceTypeId }
     })
 }
-export function addTagType(id, deviceTypeId, tagConfigName, tagConfigDesc) {
+export function addTagType(data) {
     return request({
         url: '/api/deviceType/addTagType.json',
         method: 'post',
-        data: { id, deviceTypeId, tagConfigName, tagConfigDesc }
+        data
     })
 }
 export function delTagConfig(tagConfigId) {
@@ -61,5 +61,22 @@ export function diagnosisdel(id) {
         url: '/api/diagnosis/del.json',
         method: 'post',
         data: { id }
+    })
+}
+export function diagnosisSave(deviceTypeId, advice, tagValues, results) {
+    return request({
+
+
+
+        url: '/api/diagnosis/save.json',
+        method: 'post',
+        data: { deviceTypeId, advice, tagValues, results }
+    })
+}
+export function saveRecycleConfigs(data) {
+    return request({
+        url: '/api/deviceType/saveRecycleConfigs.json',
+        method: 'post',
+        data
     })
 }

@@ -73,7 +73,8 @@ export default {
       errorNum: 0,
       Mapsize: 0,
       tableData: [],
-      listData: []
+      listData: [],
+      dialogVisible: false
     }
   },
   created() {

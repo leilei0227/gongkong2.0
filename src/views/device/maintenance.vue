@@ -25,12 +25,25 @@
 
         <el-table-column prop="firm.createTime" label="维护开始时间" :formatter="dateFormat"> </el-table-column>
         <el-table-column prop="firm.expiredTime" label="下次维护时间" :formatter="dateFormat"> </el-table-column>
-        <!-- <el-table-column label="操作" width="150">
+        <el-table-column label="操作">
           <template>
-            <el-button type="text" plain @click="dialogVisible = true">设备维护</el-button>
+            <el-button size="mini" @click="dialogVisibleEdit = true">设备维护</el-button>
           </template>
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
+      <el-drawer :visible.sync="dialogVisibleEdit" title="设备维护">
+        <el-form style="margin:10px"> 
+          <el-form-item label="维护开始时间">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="维护结束时间">
+            <el-input></el-input>
+          </el-form-item>
+           <el-form-item label="维护记录">
+            <el-input  type="textarea"></el-input>
+          </el-form-item>
+        </el-form>
+         </el-drawer>
       <!-- <el-dialog :visible.sync="dialogTableVisible" width="1500px">
         <div class="dialog-title">厂商</div>
         <el-form ref="form" style="padding-top: 10px; padding-bottom: 10px">
@@ -205,6 +218,7 @@ export default {
   data() {
     return {
       input: '',
+      dialogVisibleEdit: false,
       dialogVisible: false,
       dialogTableVisible: false,
       form: { startTime: '', endTime: '', desc: '' },

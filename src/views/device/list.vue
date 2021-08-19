@@ -12,12 +12,13 @@
         <el-button type="primary" icon="el-icon-search" @click="handleCreate">添加</el-button>
         <el-button type="primary">上传</el-button>
         <el-button type="primary" @click="handleDownload()">下载</el-button>
-        <el-button type="primary" plain>打印</el-button>
+        <el-button type="primary" @click="printDialogVisible = true" plain>打印</el-button>
         <!-- <el-button type="danger" plain>删除</el-button> -->
       </div>
     </div>
     <div class="content-table">
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column type="selection"></el-table-column>
         <el-table-column prop="deviceName" label="设备名称" width="150"> </el-table-column>
         <el-table-column prop="firm.deviceName" label="设备种类" width="130"> </el-table-column>
         <el-table-column prop="firm.name" label="生产厂商" width="130"> </el-table-column>
@@ -185,24 +186,55 @@
           </el-form-item>
         </el-form>
       </el-drawer>
+      <el-dialog width="30%" title="打印二维码" :visible.sync="printDialogVisible">
+        <el-form label-position="right" label-width="90px">
+          <el-form-item label="标识类型">
+            <el-select v-model="typePrint">
+              <el-option label="物联标识" value="1"></el-option>
+              <el-option label="序列号" value="2"></el-option>
+              <el-option label="物资编号" value="3"></el-option> </el-select
+          ></el-form-item>
+          <el-form-item label="二维码大小"
+            ><el-select v-model="sizePrint">
+              <el-option label="100" value="100"></el-option>
+              <el-option label="150" value="150"></el-option>
+              <el-option label="200" value="200"></el-option>
+              <el-option label="250" value="250"></el-option>
+              <el-option label="300" value="300"></el-option>
+              <el-option label="350" value="350"></el-option>
+              <el-option label="400" value="400"></el-option>
+            </el-select>
+            <!-- <el-button style="margin-left: 10px" type="primary">自定义</el-button> -->
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="printQrcode">打印</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { fetchList, deleteDevice, saveDevice } from '@/api/device'
+import { fetchList, deleteDevice, saveDevice, getQrCode } from '@/api/device'
 import { list } from '@/api/autocontrol'
 import { parseTime } from '@/utils'
 import qs from 'qs'
+import QRCode from 'qrcodejs2'
 export default {
   name: 'Device-list',
   data() {
     return {
       dialogVisible: false,
+      printDialogVisible: false,
       treeData: [],
       //device: '',
       treeAllData: [],
       mineStatusValue: [],
+      typePrint: '1',
+      sizePrint: '100',
+      idList: '',
+      idListAll: '',
       titleMap: {
         add: '添加',
         edit: '编辑'
@@ -344,39 +376,43 @@ export default {
   },
   created() {
     this.getList()
-    this.list()
+    // this.list()
   },
   methods: {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then((response) => {
         this.tableData = response.data
+        this.tableData.forEach((item) => {
+          this.idListAll += item.id + ','
+          this.idList = this.idListAll
+        })
         this.listLoading = false
       })
       // console.log(this.tableAllData.deviceName)
       // this.tableData.push(this.tableAllData.deviceName, this.tableAllData.firm)
       // console.log(res.data[0].firm)
     },
-    async list() {
-      const res = await list()
-      this.treeAllData = res.data
-      this.treeData = this.getTree(this.treeAllData, 0)
-      //console.log(111)
-      //console.log(this.treeData)
-    },
+    // async list() {
+    //   const res = await list()
+    //   this.treeAllData = res.data
+    //   this.treeData = this.getTree(this.treeAllData, 0)
+    //   //console.log(111)
+    //   //console.log(this.treeData)
+    // },
 
-    getTree(treeData, parentId) {
-      var treeArr = []
-      for (var i = 0; i < treeData.length; i++) {
-        var node = treeData[i]
-        if (node.pid == parentId) {
-          var newNode = { id: node.id, label: node.name, children: this.getTree(treeData, node.id), pid: node.pid, isRemind: node.isRemind, relatedId: node.relatedId }
-          treeArr.push(newNode)
-        }
-      }
-      // console.log(treeArr)
-      return treeArr
-    },
+    // getTree(treeData, parentId) {
+    //   var treeArr = []
+    //   for (var i = 0; i < treeData.length; i++) {
+    //     var node = treeData[i]
+    //     if (node.pid == parentId) {
+    //       var newNode = { id: node.id, label: node.name, children: this.getTree(treeData, node.id), pid: node.pid, isRemind: node.isRemind, relatedId: node.relatedId }
+    //       treeArr.push(newNode)
+    //     }
+    //   }
+    //   // console.log(treeArr)
+    //   return treeArr
+    // },
     getClass(row, column) {
       var type = row.firm
       return firm.typeName
@@ -532,43 +568,43 @@ export default {
         this.downloadLoading = false
       })
     },
-    selectChange(e) {
-      var arrNew = []
-      var dataLength = this.mineStatusValue.length
-      var eleng = e.length
-      for (let i = 0; i < dataLength; i++) {
-        for (let j = 0; j < eleng; j++) {
-          if (e[j] === this.mineStatusValue[i].label) {
-            arrNew.push(this.mineStatusValue[i])
-          }
-        }
-      }
-      this.$refs.tree.setCheckedNodes(arrNew) //设置勾选的值
-    },
-    handleNodeClick() {
-      let res = this.$refs.tree.getCheckedNodes(true, true) //这里两个true，1. 是否只是叶子节点 2. 是否包含半选节点（就是使得选择的时候不包含父节点）
-      let arrLabel = []
-      let tagArr = []
-      let arr = []
-      res.forEach((item) => {
-        arrLabel.push(item.label)
-        arr.push(item)
-      })
-      if (arr) {
-        arr.forEach((item) => {
-          //const res = getTagConfigs(item.id)
-          tagArr.push(item.id)
-        })
-        this.idString = tagArr.join(',')
-      }
-      this.mineStatusValue = arr
-      this.temp.firm.deviceName = arrLabel
-      //console.log('arr:' + JSON.stringify(arr))
-      //  console.log('arrLabel:' + arrLabel)
+    // selectChange(e) {
+    //   var arrNew = []
+    //   var dataLength = this.mineStatusValue.length
+    //   var eleng = e.length
+    //   for (let i = 0; i < dataLength; i++) {
+    //     for (let j = 0; j < eleng; j++) {
+    //       if (e[j] === this.mineStatusValue[i].label) {
+    //         arrNew.push(this.mineStatusValue[i])
+    //       }
+    //     }
+    //   }
+    //   this.$refs.tree.setCheckedNodes(arrNew) //设置勾选的值
+    // },
+    // handleNodeClick() {
+    //   let res = this.$refs.tree.getCheckedNodes(true, true) //这里两个true，1. 是否只是叶子节点 2. 是否包含半选节点（就是使得选择的时候不包含父节点）
+    //   let arrLabel = []
+    //   let tagArr = []
+    //   let arr = []
+    //   res.forEach((item) => {
+    //     arrLabel.push(item.label)
+    //     arr.push(item)
+    //   })
+    //   if (arr) {
+    //     arr.forEach((item) => {
+    //       //const res = getTagConfigs(item.id)
+    //       tagArr.push(item.id)
+    //     })
+    //     this.idString = tagArr.join(',')
+    //   }
+    //   this.mineStatusValue = arr
+    //   this.temp.firm.deviceName = arrLabel
+    //   //console.log('arr:' + JSON.stringify(arr))
+    //   //  console.log('arrLabel:' + arrLabel)
 
-      this.aaaa = tagArr[0]
-      // console.log(444, arrLabel, this.temp.firm.deviceName)
-    },
+    //   this.aaaa = tagArr[0]
+    //   // console.log(444, arrLabel, this.temp.firm.deviceName)
+    // },
     formatJson(filterVal) {
       return this.tableData.map((obj) =>
         filterVal.map((key) => {
@@ -580,6 +616,24 @@ export default {
           }
         })
       )
+    },
+    handleSelectionChange(val) {
+      this.idList = ''
+      if (val.length) {
+        val.forEach((item) => {
+          this.idList += item.id + ','
+        })
+      } else {
+        this.idList = this.idListAll
+      }
+      //console.log(val,this.idList, 999)
+    },
+    printQrcode() {
+      // const res = await getQrCode(543, 1, 100)
+      // console.log(this.tableData, 111)
+      this.printDialogVisible = false
+      console.log(this.idList)
+      window.open('http://localhost:9528/api/source/getQrCode.json?deviceIds=' + this.idList + '&type=' + this.typePrint + '&size=' + this.sizePrint + '')
     }
   }
 }
@@ -603,6 +657,9 @@ export default {
     padding: 20px;
     display: flex;
     justify-content: space-between;
+  }
+  ::v-deep .el-drawer {
+    overflow: scroll;
   }
   .content-table {
     padding: 20px;

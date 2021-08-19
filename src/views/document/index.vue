@@ -2,15 +2,15 @@
   <div class="content-container">
     <div class="tree-container">
       <div class="tree-title">文档类型</div>
-      <el-tree :data="treeData" show-checkbox node-key="id" @node-click="handleNodeClick"> </el-tree>
+      <el-tree :data="treeData" node-key="id" @node-click="handleNodeClick"> </el-tree>
     </div>
     <div class="table-container">
       <div class="button-container">
         <div class="input-container">
-          <el-input style="margin-right: 10px"></el-input>
-          <el-button type="primary" icon="el-icon-search"></el-button>
+          <!-- <el-input style="margin-right: 10px"></el-input>
+          <el-button type="primary" icon="el-icon-search"></el-button> -->
         </div>
-        <el-upload class="upload-demo" action="http://localhost:9528/api/doc/upload.json" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove">
+        <el-upload :data="{ type: this.data_id }" class="upload-demo" action="http://localhost:9528/api/doc/upload.json" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :on-success="docList1">
           <el-button type="primary">上传文件</el-button>
         </el-upload>
       </div>
@@ -19,7 +19,7 @@
         <el-table-column prop="updateTime" label="上传日期" :formatter="dateFormat"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="{ row }">
-            <el-button size="mini" @click="handleDownload()">下载</el-button>
+            <el-button size="mini" @click="handleDownload(row)">下载</el-button>
             <el-button size="mini" @click="handledelete(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -94,20 +94,16 @@ export default {
           this.$message.info('已取消删除')
         })
     },
-    handleDownload() {
-      // this.downloadLoading = true
-      // import('@/vendor/Export2Excel').then((excel) => {
-      //   const tHeader = ['系统设备名', '设备种类', '生产厂商', '品牌系列', '规格型号', '序列号', '质保期限', '出厂日期']
-      //   const filterVal = ['deviceName', 'firm.deviceName', 'firm.name', 'firm.brand', 'firm.pattern', 'firm.number', 'firm.createTime', 'firm.expiredTime']
-      //   const data = this.formatJson(filterVal)
-      //   excel.export_json_to_excel({
-      //     header: tHeader,
-      //     data,
-      //     filename: `设备列表(${parseTime(new Date(), '{y}-{m}-{d} {h}h{i}m{s}s')})`
-      //   })
-      //   this.downloadLoading = false
-      // })
+    handleDownload(row) {
+      var a = document.createElement('a')
+      var event = new MouseEvent('click')
+      a.download = row.docName
+      a.href = '/api/doc/download.json?id=' + row.id
+      a.dispatchEvent(event)
     },
+    // handleSuccess(){
+
+    // },
     handleRemove(file) {
       console.log(file)
     },

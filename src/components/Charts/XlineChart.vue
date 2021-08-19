@@ -13,6 +13,10 @@ export default {
       type: String,
       default: 'chart'
     },
+    // lineData: {
+    //   type: Array,
+    //   default: () => []
+    // },
     width: {
       type: String,
       default: '100%'
@@ -115,58 +119,85 @@ export default {
           {
             type: 'bar',
             barWidth: 16,
-
+            showBackground: true,
+            backgroundStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 1,
+                y2: 0,
+                colorStops: [
+                  {
+                    offset: 0.5,
+                    color: '#62B58F' // 100% 处的颜色
+                  },
+                  {
+                    offset: 0.5,
+                    color: '#FFC533' // 0% 处的颜色
+                  },
+                  {
+                    offset: 0.75,
+                    color: '#FFC533' // 100% 处的颜色
+                  },
+                  {
+                    offset: 0.75,
+                    color: '#F2726F' // 100% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: '#F2726F' // 0% 处的颜色
+                  }
+                ]
+              }
+            },
             label: {
               normal: {
                 borderWidth: 10,
                 distance: 20,
+                //  position: 'top',
                 //   align: 'center',
                 verticalAlign: 'middle',
                 borderRadius: 1,
                 borderColor: '#E8A61F',
                 backgroundColor: '#E8A61F',
                 show: true,
-                position: 'top',
+                // position: 'top',
                 formatter: '{c}%',
                 color: '#000'
               }
             },
             itemStyle: {
-              color: '#E8A61F'
+              //color: '#000',
+              // opacity: 0.1,
+              color: {
+                colorStops: [
+                  {
+                    offset: 0.5,
+                    color: '#62B58F' // 100% 处的颜色
+                  },
+                  {
+                    offset: 0.5,
+                    color: '#FFC533' // 0% 处的颜色
+                  },
+                  {
+                    offset: 0.75,
+                    color: '#FFC533' // 100% 处的颜色
+                  },
+                  {
+                    offset: 0.75,
+                    color: '#F2726F' // 100% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: '#F2726F' // 0% 处的颜色
+                  }
+                ]
+              }
             },
             data: [
               {
-                value: 19,
-                itemStyle: {
-                  normal: {
-                    color: {
-                      type: 'bar',
-                      colorStops: [
-                        {
-                          offset: 0.5,
-                          color: '#62B58F' // 100% 处的颜色
-                        },
-                        {
-                          offset: 0.5,
-                          color: '#FFC533' // 0% 处的颜色
-                        },
-                        {
-                          offset: 0.75,
-                          color: '#FFC533' // 100% 处的颜色
-                        },
-                        {
-                          offset: 0.75,
-                          color: '#F2726F' // 100% 处的颜色
-                        },
-                        {
-                          offset: 1,
-                          color: '#F2726F' // 0% 处的颜色
-                        }
-                      ]
-                      //  globalCoord: false // 缺省为 false
-                    }
-                  }
-                }
+                value: this.chartData
               }
             ]
           }

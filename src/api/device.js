@@ -83,3 +83,10 @@ export function saveDevice(typeId, firm, installer,
         }
     })
 }
+export function getQrCode(deviceIds, type, size) {
+    return request({
+        url: '/api/source/getQrCode.json',
+        method: 'get',
+        params: { deviceIds, type, size }
+    })
+}

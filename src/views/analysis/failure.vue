@@ -57,7 +57,7 @@
       </div>
     </div>
     <div class="box-button">
-      <el-button type="primary">打印结果</el-button>
+      <el-button type="primary" @click="PrintPage">打印结果</el-button>
     </div>
   </div>
 </template>
@@ -249,6 +249,10 @@ export default {
       }
 
       //this.category = res.data.category
+    },
+    PrintPage() {
+      window.print()
+      return
     }
     //async errorList() {
     //  const res = await errorList()

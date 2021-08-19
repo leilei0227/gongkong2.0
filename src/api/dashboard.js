@@ -20,3 +20,24 @@ export function statistics(data) {
         data
     })
 }
+export function getUnit(unitId) {
+    return request({
+        url: '/api/unit/getUnit.json',
+        method: 'post',
+        data: { unitId }
+    })
+}
+export function getUnits(parentId) {
+    return request({
+        url: '/api/unit/getUnits.json',
+        method: 'post',
+        data: { parentId }
+    })
+}
+export function changeUnit(unitId) {
+    return request({
+        url: '/api/unit/changeUnit.json',
+        method: 'post',
+        data: { unitId }
+    })
+}

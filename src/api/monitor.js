@@ -96,3 +96,10 @@ export function deviceInfo(mac) {
         data: { mac }
     })
 }
+export function estimate(deviceId) {
+    return request({
+        url: '/api/diagnosis/estimate.json',
+        method: 'post',
+        data: { deviceId }
+    })
+}
