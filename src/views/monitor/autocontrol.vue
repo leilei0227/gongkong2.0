@@ -365,6 +365,40 @@
           </el-tab-pane>
         </el-tabs>
       </el-dialog>
+      <el-dialog :visible.sync="dialogTabVisible">
+        <el-form >
+          <el-form-item>
+    <el-button type="primary">连接</el-button>
+    <el-button>断开</el-button>
+     <el-button type="primary">查看报文</el-button>
+  </el-form-item>
+  <el-form inline>
+  <el-form-item label="IP和端口："> 
+
+  </el-form-item>
+  <el-form-item label="主站报文："> 
+
+  </el-form-item>
+  <el-form-item label="从站报文："> 
+
+  </el-form-item>
+  <el-form-item label="判断间隔："> 
+
+  </el-form-item>
+  <el-form-item label="链路状态："> 
+
+  </el-form-item></el-form>
+  <el-form-item label="错误记录："></el-form-item>
+  <el-table>
+    <el-table-column label="序号"></el-table-column>
+    <el-table-column label="时间"></el-table-column>
+    <el-table-column label="主站报文"></el-table-column>
+    <el-table-column label="从站报文"></el-table-column>
+    <el-table-column label="错误信息"></el-table-column>
+
+  </el-table>
+        </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -401,6 +435,7 @@ export default {
       dialogTableVisible: false,
       xianchangShow: false,
       ITshow: false,
+      dialogTabVisible:true,
       options: [
         {
           value: 'deviceName',

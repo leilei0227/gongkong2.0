@@ -49,7 +49,7 @@ module.exports = {
                     */
                     '^/api': '/'
                 },
-                headers: { Cookie: 'JSESSIONID= 42194A267275F98887310AB4107671C1' }
+                headers: { Cookie: 'JSESSIONID= 8D18B235DFACDA84ABA874D1BD3A83AE' }
 
                 /*     onProxyRes: function(proxyRes, req, res) {
                         var cookies = proxyRes.headers['set-cookie'];
