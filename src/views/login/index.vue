@@ -86,25 +86,25 @@ export default {
       })
     },
     handleLogin() {
-      // this.$refs.loginForm.validate((valid) => {
-      //   if (valid) {
-      //     this.loading = true
-      //     this.$store
-      //       .dispatch('user/login', this.loginForm)
-      //       .then(() => {
-      //         console.log(111111111)
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          this.$store
+            .dispatch('user/login', this.loginForm)
+            .then(() => {
+              console.log(111111111)
       this.$router.push({ path: this.redirect || '/dashboard' })
-      //       this.loading = false
-      //     })
-      //     .catch(() => {
-      //       console.log(2)
-      //       this.loading = false
-      //     })
-      // } else {
-      //   console.log('error submit!!')
-      //   return false
-      // }
-      // })
+            this.loading = false
+          })
+          .catch(() => {
+            console.log(2)
+            this.loading = false
+          })
+      } else {
+        console.log('error submit!!')
+        return false
+      }
+      })
     }
   }
 }
