@@ -1,9 +1,9 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <div class="title-container">
+      <!-- <div class="title-container">
         <h3 class="title">登录</h3>
-      </div>
+      </div> -->
 
       <el-form-item prop="username">
         <span class="svg-container">
@@ -22,7 +22,7 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width: 100%; margin-bottom: 30px" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width: 100%; margin-bottom: 30px" @click.native.prevent="handleLogin">登 录</el-button>
 
       <div class="tips">
         <!--  <span style="margin-right: 20px">username: admin</span>
@@ -127,16 +127,20 @@ $cursor: #fff;
 /* reset element-ui css */
 .login-container {
   height: 100vh;
-  background-image: url('../../assets/img/login/u1.png'), url('../../assets/img/login/u2.png'), url('../../assets/img/login/u13.png');
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: 0 0, 200px 0, 400px 201px;
+  // background-image: url('../../assets/img/login/u1.png'), url('../../assets/img/login/u2.png'), url('../../assets/img/login/u13.png');
+  // background-repeat: no-repeat, no-repeat, no-repeat;
+  // background-position: 0 0, 200px 0, 400px 201px;
+  background: url('../../assets/img/login/u1.png') left center no-repeat;
+  display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .el-form {
   .el-input {
     ::v-deep .el-input__inner {
       background-color: #fff0;
       border: 1px solid #fff0;
-      color: #fff;
+      color: #333;
     }
     display: inline-block;
     height: 47px;
@@ -177,11 +181,11 @@ $light_gray: #eee;
   overflow: hidden;
 
   .login-form {
-    position: relative;
+    // position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
+    // padding: 160px 35px 0;
+    // margin: 0 auto;
     overflow: hidden;
   }
 
@@ -210,7 +214,7 @@ $light_gray: #eee;
 
     .title {
       font-size: 26px;
-      color: $light_gray;
+      color: #000;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;

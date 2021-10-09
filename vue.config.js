@@ -49,7 +49,7 @@ module.exports = {
                     */
                     '^/api': '/'
                 },
-                headers: { Cookie: 'JSESSIONID= 507A0A91E1FC5EBFBDE946726ABC6170' }
+                headers: { Cookie: 'JSESSIONID= 85C8FDE0CA95030B61697CA2C4A33683' }
 
                 /*     onProxyRes: function(proxyRes, req, res) {
                         var cookies = proxyRes.headers['set-cookie'];
@@ -73,7 +73,7 @@ module.exports = {
     
                         }
                     } */
-            },
+            }
         }
 
     },
@@ -152,7 +152,7 @@ module.exports = {
                                 }
                             }
                         })
-                        // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
+                    // https:// webpack.js.org/configuration/optimization/#optimizationruntimechunk
                     config.optimization.runtimeChunk('single')
                 }
             )

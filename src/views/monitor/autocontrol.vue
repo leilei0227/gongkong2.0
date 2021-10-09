@@ -435,7 +435,7 @@ export default {
       dialogTableVisible: false,
       xianchangShow: false,
       ITshow: false,
-      dialogTabVisible:true,
+      dialogTabVisible: false,
       options: [
         {
           value: 'deviceName',

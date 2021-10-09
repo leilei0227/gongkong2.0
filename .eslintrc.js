@@ -22,7 +22,7 @@ module.exports = {
       }
     }],
     "vue/singleline-html-element-content-newline": "off",
-    "vue/multiline-html-element-content-newline":"off",
+    "vue/multiline-html-element-content-newline": "off",
     "vue/name-property-casing": ["error", "PascalCase"],
     "vue/no-v-html": "off",
     'accessor-pairs': 2,
@@ -47,13 +47,13 @@ module.exports = {
     'curly': [2, 'multi-line'],
     'dot-location': [2, 'property'],
     'eol-last': 2,
-    'eqeqeq': ["error", "always", {"null": "ignore"}],
+    'eqeqeq': ["error", "always", { "null": "ignore" }],
     'generator-star-spacing': [2, {
       'before': true,
       'after': true
     }],
     'handle-callback-err': [2, '^(err|error)$'],
-    'indent': [2, 2, {
+    'indent': [2, 4, {
       'SwitchCase': 1
     }],
     'jsx-quotes': [2, 'prefer-single'],
@@ -96,7 +96,7 @@ module.exports = {
     'no-implied-eval': 2,
     'no-inner-declarations': [2, 'functions'],
     'no-invalid-regexp': 2,
-    'no-irregular-whitespace': 2,
+    'no-irregular-whitespace': 0,
     'no-iterator': 2,
     'no-label-var': 2,
     'no-labels': [2, {
@@ -132,7 +132,7 @@ module.exports = {
     'no-sparse-arrays': 2,
     'no-this-before-super': 2,
     'no-throw-literal': 2,
-    'no-trailing-spaces': 2,
+    'no-trailing-spaces': 0,
     'no-undef': 2,
     'no-undef-init': 2,
     'no-unexpected-multiline': 2,
@@ -179,7 +179,7 @@ module.exports = {
       'words': true,
       'nonwords': false
     }],
-    'spaced-comment': [2, 'always', {
+    'spaced-comment': [0, 'always', {
       'markers': ['global', 'globals', 'eslint', 'eslint-disable', '*package', '!', ',']
     }],
     'template-curly-spacing': [2, 'never'],
