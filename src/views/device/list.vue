@@ -36,149 +36,164 @@
           </template>
         </el-table-column>
       </el-table>
+        <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" layout="prev, pager, next" @pagination="getList" />
       <el-drawer size="80%" :visible.sync="dialogVisible" :title="titleMap[dialogStatus]">
         <div class="dialog-title">厂商</div>
-        <el-form ref="dataForm" :model="temp" style="padding-top: 10px; padding-bottom: 10px">
+        <el-form ref="dataForm" :model="temp" >
           <el-form-item>
-            <span>设备种类*</span>
+            <span style="width: 190px; margin-right: 20px">*设备种类</span>
             <el-select v-model="temp.firm.deviceName" placeholder="设备种类" multiple collapse-tags @change="selectChange">
               <el-option :value="mineStatusValue" style="height: auto">
                 <el-tree :data="treeData" show-checkbox node-key="id" ref="tree" highlight-current :props="defaultProps" @check-change="handleNodeClick"></el-tree>
               </el-option>
             </el-select>
 
-            <span>系统设备名</span>
-            <el-input v-model="temp.firm.t" style="width: 300px"></el-input>
+            <span style="margin-left: 20px">系统设备名</span>
+            <el-input v-model="temp.firm.t" style="width: 190px; margin-right: 192px"></el-input>
             <span>物联标识</span>
-            <el-input v-model="temp.firm.t" style="width: 300px; margin-right: 20px"></el-input>
+            <el-input v-model="temp.firm.name" style="margin-right: 20px"></el-input>
           </el-form-item>
           <el-form-item>
-            <span>生产厂商*</span>
-            <el-input v-model="temp.firm.name" style="margin-right: 210px"></el-input>
+            <span>*生产厂商</span>
+            <el-input v-model="temp.firm.brand" style="margin-right: 198px"></el-input>
             <span>*序列号</span>
             <el-input v-model="temp.firm.number"></el-input>
           </el-form-item>
           <el-form-item>
             <span>品牌系列</span>
-            <el-input v-model="temp.firm.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.firm.name" style="margin-right: 195px"></el-input>
             <span>规格型号</span>
-            <el-input v-model="temp.firm.t"></el-input>
+            <el-input v-model="temp.firm.pattern"></el-input>
           </el-form-item>
           <el-form-item>
             <span>技术参数</span>
-            <el-input v-model="temp.firm.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.firm.params" style="margin-right: 195px"></el-input>
             <span>出厂日期</span>
-            <el-input v-model="temp.firm.t"></el-input>
+            <el-input v-model="temp.firm.createTime"></el-input>
           </el-form-item>
           <el-form-item>
             <span>质保期限</span>
-            <el-input v-model="temp.firm.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.firm.expiredTime" style="margin-right: 195px"></el-input>
             <span>订单编号</span>
-            <el-input v-model="temp.firm.t"></el-input>
+            <el-input v-model="temp.firm.orderNo"></el-input>
           </el-form-item>
           <el-form-item>
             <span>联系方式</span>
-            <el-input v-model="temp.firm.t" style="margin-right: 225px"></el-input>
+            <el-input v-model="temp.firm.contact" style="margin-right: 218px"></el-input>
             <span>*地址</span>
-            <el-input v-model="temp.firm.lng"></el-input>
+            <el-input v-model="temp.firm.address"></el-input>
           </el-form-item>
         </el-form>
         <div class="dialog-title">集成</div>
-        <el-form ref="dataForm" :model="temp" style="padding-top: 10px; padding-bottom: 10px">
+        <el-form ref="dataForm" :model="temp" >
           <el-form-item>
             <span>集成厂商</span>
-            <el-input v-model="temp.installer.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.installer.name" style="margin-right: 195px"></el-input>
             <span>项目编号</span>
-            <el-input v-model="temp.installer.t"></el-input>
+            <el-input v-model="temp.installer.projectNo"></el-input>
           </el-form-item>
           <el-form-item>
             <span>项目名称</span>
-            <el-input v-model="temp.installer.t" style="margin-right: 190px"></el-input>
+            <el-input v-model="temp.installer.projectName" style="margin-right: 190px"></el-input>
             <span>主配件SN</span>
-            <el-input v-model="temp.installer.t"></el-input>
+            <el-input v-model="temp.installer.snCode"></el-input>
           </el-form-item>
           <el-form-item>
             <span>机柜编号</span>
-            <el-input v-model="temp.installer.t" style="margin-right: 225px"></el-input>
+            <el-input v-model="temp.installer.cabinetNo" style="margin-right: 218px"></el-input>
             <span>*地址</span>
-            <el-input v-model="temp.installer.t"></el-input>
+            <el-input v-model="temp.installer.address"></el-input>
           </el-form-item>
           <el-form-item>
             <span>联系方式</span>
-            <el-input v-model="temp.installer.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.installer.contact" style="margin-right: 195px"></el-input>
           </el-form-item>
         </el-form>
         <div class="dialog-title">安装</div>
-        <el-form ref="dataForm" :model="temp" style="padding-top: 10px; padding-bottom: 10px">
+        <el-form ref="dataForm" :model="temp">
           <el-form-item>
             <span>总包单位</span>
-            <el-input v-model="temp.integrator.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.integrator.packageUnit" style="margin-right: 195px"></el-input>
             <span>设计单位</span>
-            <el-input v-model="temp.integrator.t"></el-input>
+            <el-input v-model="temp.integrator.designUnit"></el-input>
           </el-form-item>
           <el-form-item>
             <span>采办单位</span>
-            <el-input v-model="temp.integrator.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.integrator.purchaseUnit" style="margin-right: 195px"></el-input>
             <span>施工单位</span>
-            <el-input v-model="temp.integrator.t"></el-input>
+            <el-input v-model="temp.integrator.executeUnit"></el-input>
           </el-form-item>
           <el-form-item>
             <span>入库时间</span>
-            <el-input v-model="temp.integrator.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.integrator.entryDate" style="margin-right: 195px"></el-input>
             <span>安装日期</span>
-            <el-input v-model="temp.integrator.t"></el-input>
+            <el-input v-model="temp.integrator.installDate"></el-input>
           </el-form-item>
           <el-form-item>
             <span>安装地点</span>
-            <el-input v-model="temp.integrator.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.integrator.installAddress" style="margin-right: 195px"></el-input>
             <span>合同编号</span>
-            <el-input v-model="temp.integrator.t"></el-input>
+            <el-input v-model="temp.integrator.contractNo"></el-input>
           </el-form-item>
 
           <el-form-item>
             <span>联系方式</span>
-            <el-input v-model="temp.integrator.t" style="margin-right: 225px"></el-input>
+            <el-input v-model="temp.integrator.contact" style="margin-right: 218px"></el-input>
             <span>*地址</span>
-            <el-input v-model="temp.integrator.t"></el-input>
+            <el-input v-model="temp.integrator.address"></el-input>
           </el-form-item>
         </el-form>
         <div class="dialog-title">使用</div>
-        <el-form ref="dataForm" :model="temp" style="padding-top: 10px; padding-bottom: 10px">
+        <el-form ref="dataForm" :model="temp">
           <el-form-item>
             <span>业主</span>
-            <el-input v-model="temp.owner.t" style="margin-left: 50px; margin-right: 195px"></el-input>
+            <el-input v-model="temp.owner.name" style="margin-left: 50px; margin-right: 195px"></el-input>
             <span>物质编号</span>
-            <el-input v-model="temp.owner.t"></el-input>
+            <el-input v-model="temp.owner.assetNo"></el-input>
           </el-form-item>
           <el-form-item>
             <span>部门</span>
-            <el-input v-model="temp.owner.t" style="margin-left: 50px; margin-right: 195px"></el-input>
+            <el-input v-model="temp.owner.department" style="margin-left: 50px; margin-right: 195px"></el-input>
             <span>设备状态</span>
-            <el-input v-model="temp.owner.t"></el-input>
+            <el-input v-model="temp.owner.deviceStatus"></el-input>
           </el-form-item>
           <el-form-item>
             <span>验收日期</span>
-            <el-input v-model="temp.owner.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.owner.acceptDate" style="margin-right: 195px"></el-input>
             <span>投产日期</span>
-            <el-input v-model="temp.owner.t"></el-input>
+            <el-input v-model="temp.owner.productDate"></el-input>
           </el-form-item>
           <el-form-item>
             <span>质保期限</span>
-            <el-input v-model="temp.owner.t" style="margin-right: 195px"></el-input>
+            <el-input v-model="temp.owner.expiration" style="margin-right: 195px"></el-input>
             <span>报废日期</span>
-            <el-input v-model="temp.owner.t"></el-input>
+            <el-input v-model="temp.owner.discardDate"></el-input>
           </el-form-item>
           <el-form-item>
+            <span >下次维护</span>
+            <el-input v-model="temp.owner.repairDate" style="margin-right: 195px"></el-input>
+            <span >下次检定</span>
+            <el-input v-model="temp.owner.checkDate"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <span>维护记录</span>
+            <el-input v-model="temp.owner.repairRecord" style="width: 86%"></el-input>
+            </el-form-item>
+          <el-form-item>
+            <span>检定记录</span>
+            <el-input v-model="temp.owner.checkRecord" style="width: 86%"></el-input>
+          </el-form-item> 
+          <el-form-item>
             <span>负责人</span>
-            <el-input v-model="temp.owner.t" style="margin-left: 35px; margin-right: 195px"></el-input>
+            <el-input v-model="temp.owner.chargeUser" style="margin-left: 35px; margin-right: 192px"></el-input>
             <span>使用时间</span>
             <el-input v-model="temp.owner.t"></el-input>
           </el-form-item>
           <el-form-item>
             <span>联系方式</span>
-            <el-input v-model="temp.owner.t" style="margin-right: 225px"></el-input>
+            <el-input v-model="temp.owner.contact" style="margin-right: 218px"></el-input>
             <span>*地址</span>
-            <el-input v-model="temp.owner.t"></el-input>
+            <el-input v-model="temp.owner.address"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button style="margin-left: 40%" @click="dialogVisible = false">取消</el-button>
@@ -216,6 +231,7 @@
 </template>
 
 <script>
+import Pagination from '@/components/Pagination'
 import { fetchList, deleteDevice, saveDevice, getQrCode } from '@/api/device'
 import { list } from '@/api/autocontrol'
 import { parseTime } from '@/utils'
@@ -223,6 +239,7 @@ import qs from 'qs'
 import QRCode from 'qrcodejs2'
 export default {
   name: 'Device-list',
+  components: { Pagination },
   data() {
     return {
       dialogVisible: false,
@@ -264,6 +281,7 @@ export default {
         // count: 10,
         searchKey: ''
       },
+      total: 0,
       options: [
         {
           value: 'firm.number',
@@ -377,8 +395,19 @@ export default {
   created() {
     this.getList()
     // this.list()
+    this.getLimit()
   },
   methods: {
+    async getLimit() {
+      const res = await getLimit()
+      this.prefix = res.data.prefix
+      this.prefixType = res.data.prefixType
+      },
+      getIotId() {
+      var temp = this.prefixType === 1 ? this.firm.number : this.owner != null ? this.owner.assetNo : ''
+      return this.prefix + temp
+},
+
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then((response) => {
@@ -388,6 +417,7 @@ export default {
           this.idList = this.idListAll
         })
         this.listLoading = false
+        this.total = response.pageDto.count
       })
       // console.log(this.tableAllData.deviceName)
       // this.tableData.push(this.tableAllData.deviceName, this.tableAllData.firm)
@@ -648,9 +678,12 @@ export default {
     margin-right: 100px;
   }
   .dialog-title {
-    padding: 10px;
+    padding: 10px 20px;
     background-color: rgb(218, 237, 243);
     font-weight: bold;
+  }
+  .el-form {
+    padding: 20px 20px 0px 20px;
   }
   .content-but {
     width: 100%;

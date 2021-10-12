@@ -27,7 +27,7 @@ module.exports = {
     publicPath: '/gongkong-new',
     outputDir: 'dist',
     assetsDir: 'static',
-    lintOnSave: process.env.NODE_ENV === 'development',
+    lintOnSave: process.env.NODE_ENV !== 'development',
     productionSourceMap: false,
     devServer: {
         port: port,
@@ -49,7 +49,7 @@ module.exports = {
                     */
                     '^/api': '/'
                 },
-                headers: { Cookie: 'JSESSIONID= 85C8FDE0CA95030B61697CA2C4A33683' }
+                headers: { Cookie: 'JSESSIONID= F6735978E91FF7A76860361BE4845400' }
 
                 /*     onProxyRes: function(proxyRes, req, res) {
                         var cookies = proxyRes.headers['set-cookie'];

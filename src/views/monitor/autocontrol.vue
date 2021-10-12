@@ -16,6 +16,7 @@
         </div>
       </div>
       <el-table :data="tableData" border style="width: 98%" :cell-style="{ 'text-align': 'center' }" :header-cell-style="{ 'text-align': 'center' }">
+        <!-- <el-table-column label="#" type="index" width="50" /> -->
         <el-table-column prop="createTime" label="故障时间" width="180" :formatter="parsetime"> </el-table-column>
         <el-table-column prop="deviceName" label="设备名称">
           <!-- <template slot-scope="scope">
@@ -35,17 +36,19 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" layout="prev, pager, next" @pagination="getmyErrortList" /> -->
       <el-drawer :visible.sync="dialogVisibleEdit" title="结论与原因" width="40%">
         <el-form style="margin-right: 10px" ref="dataForm" :model="temp" label-width="80px" label-position="right">
           <el-form-item label="结论">
-            <el-input v-model="temp.result"></el-input>
+            <el-checkbox v-model="temp.result">其他</el-checkbox>
+            <!-- <el-input v-model="temp.result"></el-input> -->
           </el-form-item>
           <el-form-item label="故障原因">
             <el-input v-model="temp.errorReason" type="textarea"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="updateData()">保存</el-button>
-            <el-button>取消</el-button>
+            <el-button @click="dialogVisibleEdit=false">取消</el-button>
           </el-form-item>
         </el-form>
       </el-drawer>
@@ -58,15 +61,15 @@
             <span>站名</span>
             <el-input v-model="temp2.station" style="margin-left: 38px; margin-right: 50px"></el-input>
             <span>故障发生时间</span>
-            <el-input v-model="temp2.happenTime" style="margin-left: 10px; margin-right: 50px"></el-input>
+            <el-input v-text="dateFormat(temp2.happenTime)" style="margin-left: 10px; margin-right: 50px" disabled></el-input>
             <span>汇报时间</span>
-            <el-input v-model="temp2.reportTime" style="margin-left: 10px"></el-input>
+            <el-input v-text="dateFormat(temp2.reportTime)" style="margin-left: 10px" disabled></el-input>
           </el-form-item>
           <el-form-item>
             <span>故障分类</span>
-            <el-input v-model="temp2.errorCategory" style="margin-left: 10px; margin-right: 50px"></el-input>
+            <el-input v-model="temp2.errorCategory" style="margin-left: 10px; margin-right: 50px" disabled></el-input>
             <span>设备编号</span>
-            <el-input v-model="temp2.deviceNo" style="margin-left: 40px"></el-input>
+            <el-input v-model="temp2.deviceNo" style="margin-left: 40px" disabled></el-input>
           </el-form-item>
           <el-form-item>
             <span>值班调度</span>
@@ -186,103 +189,103 @@
             <el-form model="firm">
               <el-form-item>
                 <span class="spanTag">物联标识</span>
-                <el-input v-model="firm.name"></el-input>
+                <span>{{ getIotId() }}</span>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">生产厂商</span>
-                <el-input v-model="firm.brand"></el-input>
+                <el-input v-model="firm.brand" disabled></el-input>
                 <span class="spanTag" style="margin-right: 30px"> 序列号</span>
-                <el-input v-model="firm.number"></el-input>
+                <el-input v-model="firm.number" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">设备种类</span>
-                <el-input v-model="firm.deviceName"></el-input>
+                <el-input v-model="firm.deviceName" disabled></el-input>
                 <span class="spanTag">品牌系列</span>
-                <el-input v-model="firm.name"></el-input>
+                <el-input v-model="firm.name" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">规格型号</span>
-                <el-input v-model="firm.pattern"></el-input>
+                <el-input v-model="firm.pattern" disabled></el-input>
                 <span class="spanTag">技术参数</span>
-                <el-input v-model="firm.params"></el-input>
+                <el-input v-model="firm.params" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">出厂日期</span>
-                <el-input v-model="firm.createTime"> </el-input>
+                <el-input v-model="firm.createTime" disabled> </el-input>
                 <span class="spanTag">质保期限</span>
-                <el-input v-model="firm.expiredTime"></el-input>
+                <el-input v-model="firm.expiredTime" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">订单编号</span>
-                <el-input v-model="firm.orderNo"></el-input>
+                <el-input v-model="firm.orderNo" disabled></el-input>
                 <span class="spanTag">联系方式</span>
-                <el-input v-model="firm.contact"></el-input>
+                <el-input v-model="firm.contact" disabled></el-input>
               </el-form-item>
-              <el-form-item> <span class="spanTag" style="margin-right: 40px">地址 </span> <el-input v-model="firm.address"></el-input></el-form-item>
+              <el-form-item> <span class="spanTag" style="margin-right: 40px">地址 </span> <el-input v-model="firm.address" disabled></el-input></el-form-item>
             </el-form>
           </el-tab-pane>
           <el-tab-pane label="集成" name="second">
             <el-form model="integrator">
               <el-form-item>
                 <span class="spanTag">物联标识</span>
-                <el-input v-model="integrator.name"></el-input>
+                <span>{{ getIotId() }}</span>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">集成厂商</span>
-                <el-input v-model="integrator.name"></el-input>
+                <el-input v-model="integrator.name" disabled></el-input>
                 <span class="spanTag">项目编号</span>
-                <el-input v-model="integrator.projectNo"></el-input>
+                <el-input v-model="integrator.projectNo" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">项目名称</span>
-                <el-input v-model="integrator.projectName"></el-input>
+                <el-input v-model="integrator.projectName" disabled></el-input>
                 <span class="spanTag" style="margin-right: 10px">主配件SN</span>
-                <el-input v-model="integrator.snCode"></el-input>
+                <el-input v-model="integrator.snCode" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">机柜编号</span>
-                <el-input v-model="integrator.cabinetNo"></el-input>
+                <el-input v-model="integrator.cabinetNo" disabled></el-input>
                 <span class="spanTag" style="margin-right: 40px">地址</span>
-                <el-input v-model="integrator.address"></el-input>
+                <el-input v-model="integrator.address" disabled></el-input>
               </el-form-item>
-              <el-form-item> <span class="spanTag">联系方式</span> <el-input v-model="integrator.contact"></el-input></el-form-item>
+              <el-form-item> <span class="spanTag">联系方式</span> <el-input v-model="integrator.contact" disabled></el-input></el-form-item>
             </el-form>
           </el-tab-pane>
           <el-tab-pane label="安装" name="third">
             <el-form model="installer">
               <el-form-item>
                 <span class="spanTag">物联标识</span>
-                <el-input v-model="installer.name"></el-input>
+                <span>{{ getIotId() }}</span>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">总包单位</span>
-                <el-input v-model="installer.packageUnit"></el-input>
+                <el-input v-model="installer.packageUnit" disabled></el-input>
                 <span class="spanTag">设计单位</span>
-                <el-input v-model="installer.designUnit"></el-input>
+                <el-input v-model="installer.designUnit" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">采办单位</span>
-                <el-input v-model="installer.purchaseUnit"></el-input>
+                <el-input v-model="installer.purchaseUnit" disabled></el-input>
                 <span class="spanTag">施工单位</span>
-                <el-input v-model="installer.executeUnit"></el-input>
+                <el-input v-model="installer.executeUnit" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">入库时间</span>
-                <el-input v-model="installer.entryDate"></el-input>
+                <el-input v-model="installer.entryDate" disabled></el-input>
                 <span class="spanTag">安装日期</span>
-                <el-input v-model="installer.installDate"></el-input>
+                <el-input v-model="installer.installDate" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">安装地点</span>
-                <el-input v-model="installer.installAddress"></el-input>
+                <el-input v-model="installer.installAddress" disabled></el-input>
                 <span class="spanTag">合同编号</span>
-                <el-input v-model="installer.contractNo"></el-input>
+                <el-input v-model="installer.contractNo" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">联系方式</span>
-                <el-input v-model="installer.contact"></el-input>
+                <el-input v-model="installer.contact" disabled></el-input>
                 <span class="spanTag" style="margin-right: 40px">地址</span>
-                <el-input v-model="installer.address"></el-input>
+                <el-input v-model="installer.address" disabled></el-input>
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -290,55 +293,55 @@
             <el-form model="owner">
               <el-form-item>
                 <span class="spanTag">物联标识</span>
-                <el-input v-model="owner.name"></el-input>
+                <span>{{ getIotId() }}</span>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag" style="margin-left: 30px">业主</span>
-                <el-input v-model="owner.name"></el-input>
+                <el-input v-model="owner.name" disabled></el-input>
                 <span class="spanTag">物质编号</span>
-                <el-input v-model="owner.assetNo"></el-input>
+                <el-input v-model="owner.assetNo" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag" style="margin-left: 30px">部门</span>
-                <el-input v-model="owner.department"></el-input>
+                <el-input v-model="owner.department" disabled></el-input>
                 <span class="spanTag">设备状态</span>
-                <el-input v-model="owner.deviceStatus"></el-input>
+                <el-input v-model="owner.deviceStatus" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">验收日期</span>
-                <el-input v-model="owner.acceptDate"></el-input>
+                <el-input v-model="owner.acceptDate" disabled></el-input>
                 <span class="spanTag">投产日期</span>
-                <el-input v-model="owner.productDate"></el-input>
+                <el-input v-model="owner.productDate" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">质保期限</span>
-                <el-input v-model="owner.expiration"></el-input>
+                <el-input v-model="owner.expiration" disabled></el-input>
                 <span class="spanTag">报废日期</span>
-                <el-input v-model="owner.discardDate"></el-input>
+                <el-input v-model="owner.discardDate" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">下次维护</span>
-                <el-input v-model="owner.repairDate"></el-input>
+                <el-input v-model="owner.repairDate" disabled></el-input>
                 <span class="spanTag">下次检定</span>
-                <el-input v-model="owner.checkDate"></el-input>
+                <el-input v-model="owner.checkDate" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">维护记录</span>
-                <el-input v-model="owner.repairRecord" style="width: 585px"></el-input>
+                <el-input v-model="owner.repairRecord" disabled style="width: 585px"></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag">检定记录</span>
-                <el-input v-model="owner.checkRecord" style="width: 585px"></el-input>
+                <el-input v-model="owner.checkRecord" disabled style="width: 585px"></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag" style="margin-left: 12px">负责人</span>
-                <el-input v-model="owner.chargeUser"></el-input>
+                <el-input v-model="owner.chargeUser" disabled></el-input>
                 <span class="spanTag">联系方式</span>
-                <el-input v-model="owner.contact"></el-input>
+                <el-input v-model="owner.contact" disabled></el-input>
               </el-form-item>
               <el-form-item>
                 <span class="spanTag" style="margin-left: 30px">地址</span>
-                <el-input v-model="owner.address"></el-input>
+                <el-input v-model="owner.address" disabled></el-input>
               </el-form-item>
               <!-- <el-form-item>
                 <span class="spanTag">维护开始时间</span>
@@ -358,7 +361,7 @@
             <el-form model="form">
               <el-form-item>
                 <span class="spanTag">物联标识</span>
-                <el-input v-model="form.name"></el-input>
+                <span>{{ getIotId() }}</span>
               </el-form-item>
               <linemap-chart width="800px" height="600px"></linemap-chart>
             </el-form>
@@ -366,37 +369,27 @@
         </el-tabs>
       </el-dialog>
       <el-dialog :visible.sync="dialogTabVisible">
-        <el-form >
+        <el-form>
           <el-form-item>
-    <el-button type="primary">连接</el-button>
-    <el-button>断开</el-button>
-     <el-button type="primary">查看报文</el-button>
-  </el-form-item>
-  <el-form inline>
-  <el-form-item label="IP和端口："> 
-
-  </el-form-item>
-  <el-form-item label="主站报文："> 
-
-  </el-form-item>
-  <el-form-item label="从站报文："> 
-
-  </el-form-item>
-  <el-form-item label="判断间隔："> 
-
-  </el-form-item>
-  <el-form-item label="链路状态："> 
-
-  </el-form-item></el-form>
-  <el-form-item label="错误记录："></el-form-item>
-  <el-table>
-    <el-table-column label="序号"></el-table-column>
-    <el-table-column label="时间"></el-table-column>
-    <el-table-column label="主站报文"></el-table-column>
-    <el-table-column label="从站报文"></el-table-column>
-    <el-table-column label="错误信息"></el-table-column>
-
-  </el-table>
+            <el-button type="primary">连接</el-button>
+            <el-button>断开</el-button>
+            <el-button type="primary">查看报文</el-button>
+          </el-form-item>
+          <el-form inline>
+            <el-form-item label="IP和端口："> </el-form-item>
+            <el-form-item label="主站报文："> </el-form-item>
+            <el-form-item label="从站报文："> </el-form-item>
+            <el-form-item label="判断间隔："> </el-form-item>
+            <el-form-item label="链路状态："> </el-form-item
+          ></el-form>
+          <el-form-item label="错误记录："></el-form-item>
+          <el-table>
+            <el-table-column label="序号"></el-table-column>
+            <el-table-column label="时间"></el-table-column>
+            <el-table-column label="主站报文"></el-table-column>
+            <el-table-column label="从站报文"></el-table-column>
+            <el-table-column label="错误信息"></el-table-column>
+          </el-table>
         </el-form>
       </el-dialog>
     </div>
@@ -404,6 +397,8 @@
 </template>
 
 <script>
+import moment from 'moment'
+// import {parseTime} from "@/utils"
 import { errorList, save, confirmError, saveResult, getForm, myErrorList, getUserListT, getUserList, getDevice, getDeviceByLink, recycleList, deviceInfo, estimate } from '@/api/monitor'
 import { subList } from '@/api/mautocontrol'
 import { getNewTopology } from '@/api/topo'
@@ -415,6 +410,7 @@ import ZhexianChart from '@/components/Charts/ZhexianChart'
 import LinemapChart from '@/components/Charts/LinemapChart'
 import { parseTime } from '@/utils'
 import { toThousandFilter } from '@/filters'
+import { subList as getLimit } from '@/api/other'
 //import { errorList } from '@/api/analysis'
 export default {
   name: 'Monitor-autocontrol',
@@ -479,6 +475,7 @@ export default {
         searchKey: '',
         deviceId: ''
       },
+      // total: 0,
       temp: {
         errorId: undefined,
         result: '',
@@ -522,7 +519,7 @@ export default {
       tableData1: [],
       tableData2: [],
       tableDataMon: [],
-      activeName: 'second',
+      activeName: 'first',
       input: '',
       form: { name: '' },
       firm: { address: '', brand: '', contact: '', createTime: undefined, deviceId: undefined, deviceName: '', expiredTime: undefined, id: undefined, lat: '', lng: '', name: '', number: '', orderNo: '', params: '', pattern: '' },
@@ -551,16 +548,35 @@ export default {
         name: '',
         productDate: undefined,
         repairDate: undefined,
-        repairRecord: ''
-      }
+        repairRecord: ''        
+      },
+      prefix: '',
+      prefixType: ''
     }
   },
   created() {
     this.getList()
     this.getTreeList()
     this.getNewTopology()
+    this.getLimit()
   },
   methods: {
+    dateFormat(date) {
+      // var /date = row[column.property];
+      if (date == undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
+    },//时间格式化
+    async getLimit() {
+      const res = await getLimit()
+      this.prefix = res.data.prefix
+      this.prefixType = res.data.prefixType
+      },
+      getIotId() {
+      var temp = this.prefixType === 1 ? this.firm.number : this.owner != null ? this.owner.assetNo : ''
+      return this.prefix + temp
+},
     async getTreeList() {
       const res = await subList(1)
       const res2 = await subList(2)
@@ -582,17 +598,28 @@ export default {
       this.listLoading = true
       errorList(this.listQuery).then((response) => {
         this.tableData = response.data
+        // this.tableData.forEach((item) => {
+        //   this.idListAll += item.id + ','
+        //   this.idList = this.idListAll
+        // })
         this.listLoading = false
+        // this.total = response.pageDto.count
       })
     },
 
     getErrorList() {
       this.listLoading = true
       myErrorList(this.listQuery).then((response) => {
-        this.tableData = response.data
-        console.log(123, this.tableData)
-        this.listLoading = false
-      })
+        this.tableData = response.data.reverse().slice(0, 10)
+        console.log(123, this.tableData)
+        this.listLoading = false
+        // this.total = response.pageDto.count
+      })
+      // myErrorList(this.listQuery).then((response) => {
+      //   this.tableData = response.data
+      //   console.log(123, this.tableData)
+      //   this.listLoading = false
+      // })
       // this.tableData = []
       // const res = await myErrorList()
       // this.tableData = res.data
@@ -842,13 +869,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// .el-input.is-disabled  ::v-deep .el-input__inner {
+//       background: #ffffff;
+// }
 .content-container {
+  
   display: flex;
   justify-content: space-between;
   // height: 100%;
   background-color: #fff;
   .table-container {
     width: 85%;
+    padding-bottom: 10px;
 
     .table-title {
       width: 100%;
@@ -862,7 +894,7 @@ export default {
     .el-table {
       width: 100%;
       margin-left: 10px;
-      padding-bottom: 20px;
+      // padding-bottom: 10px;
     }
 
     .el-input {
@@ -909,7 +941,8 @@ export default {
     }
   }
   .tree-container {
-    width: 15%;
+    width: 200px;
+    flex-grow: 1;
     margin: 10px;
     margin-right: 0px;
     border: 1px solid #edf0f5;

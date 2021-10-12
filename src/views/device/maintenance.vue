@@ -11,7 +11,7 @@
     </div>
     <div class="content-table">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="id" label="#" width="150"> </el-table-column>
+        <el-table-column prop="id" label="#" width="150" > </el-table-column>
         <el-table-column prop="deviceName" label="系统设备名" width="150">
           <!-- <template slot-scope="scope">
             <a @click="dialogTableVisible = true" style="color: #409eff; cursor: pointer">{{ scope.row.name }}</a>

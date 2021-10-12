@@ -1,8 +1,11 @@
 <template>
   <div class="content-container">
     <div class="content-head">
-      <el-select placeholder="维护范围">
-        <el-option></el-option>
+      <div class="box-select">
+        <el-select v-model="value" placeholder="维护范围">
+          <el-option key="1" label="调控中心" value="1" />
+          <el-option key="2" label="场站" value="2" />
+          <el-option key="3" label="阀室" value="3" />
       </el-select>
       <el-select v-model="value" placeholder="维护周期" @change="getOpData">
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -15,13 +18,19 @@
         <el-option v-for="item in getTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
       <el-button type="primary">获取</el-button>
+      </div>
+      <div class="box-but">
+        <el-button type="primary">确认并上传</el-button>
+      <el-button type="primary" plain>打印表单</el-button>
+      </div>
+      
     </div>
     <div class="content-table">
       <el-table :data="tableData" style="width: 98%; margin-left: 1%">
         <el-table-column
           ><template #header> <span v-text="'站场名称：' + value1"></span></template>
           <el-table-column>
-            <template #header> <span v-text="'检察人员：' + value3"></span></template><el-table-column align="center" label="序号" width="100" prop="value"></el-table-column> <el-table-column width="250" align="center" prop="projectName" label="检查项目"></el-table-column>
+            <template #header> <span v-text="'检察人员：' + value3"></span></template><el-table-column align="center" label="序号" width="100" prop="value" type="index"></el-table-column> <el-table-column width="250" align="center" prop="projectName" label="检查项目"></el-table-column>
             <el-table-column align="center" prop="itemDesc" label="检查内容"></el-table-column></el-table-column
         ></el-table-column>
         <el-table-column
@@ -39,6 +48,7 @@
           ></el-table-column
         >
       </el-table>
+      
     </div>
   </div>
 </template>
@@ -178,11 +188,12 @@ export default {
 <style lang="scss" scoped>
 .content-container {
   background-color: #fff;
+  padding: 0px 0px 15px 0px;
   .content-head {
-    padding: 10px;
+    padding: 15px;
     height: 15%;
     display: flex;
-    // justify-content: space-between;
+    justify-content: space-between;
     .el-select {
       margin-right: 10px;
     }
@@ -190,6 +201,7 @@ export default {
       margin-right: 10px;
     }
   }
+  
   .content-table {
     ::v-deep .el-table td > .cell {
       text-align: center;
