@@ -1,6 +1,8 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
+// 引入jq需要加入以下代码
+const webpack = require('webpack')
 
 function resolve(dir) {
     return path.join(__dirname, dir)
@@ -49,7 +51,7 @@ module.exports = {
                     */
                     '^/api': '/'
                 },
-                headers: { Cookie: 'JSESSIONID= F6735978E91FF7A76860361BE4845400' }
+                headers: { Cookie: 'JSESSIONID= A3C71D66EE5A6FEEF8ECC314F5F46AAB' }
 
                 /*     onProxyRes: function(proxyRes, req, res) {
                         var cookies = proxyRes.headers['set-cookie'];
@@ -95,6 +97,13 @@ module.exports = {
             // https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-service/lib/config/app.js#L171
             fileBlacklist: [/\.map$/, /hot-update\.js$/, /runtime\..*\.js$/],
             include: 'initial'
+        }])
+
+        config.plugin('provide').use(webpack.ProvidePlugin, [{
+            $: 'jquery',
+            jquery: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery'
         }])
 
         // when there are many pages, it will cause too many meaningless requests

@@ -10,7 +10,7 @@
       </div>
       <div class="box-but">
         <el-button type="primary" icon="el-icon-search" @click="handleCreate">添加</el-button>
-        <el-button type="primary">上传</el-button>
+        <el-button type="primary" @click="uploadDialogVisible = true">上传</el-button>
         <el-button type="primary" @click="handleDownload()">下载</el-button>
         <el-button type="primary" @click="printDialogVisible = true" plain>打印</el-button>
         <!-- <el-button type="danger" plain>删除</el-button> -->
@@ -36,17 +36,17 @@
           </template>
         </el-table-column>
       </el-table>
-        <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" layout="prev, pager, next" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" :page.sync="listQuery.pageNum" layout="prev, pager, next" @pagination="getList" />
       <el-drawer size="80%" :visible.sync="dialogVisible" :title="titleMap[dialogStatus]">
         <div class="dialog-title">厂商</div>
-        <el-form ref="dataForm" :model="temp" >
+        <el-form ref="dataForm" :model="temp">
           <el-form-item>
             <span style="width: 190px; margin-right: 20px">*设备种类</span>
-            <el-select v-model="temp.firm.deviceName" placeholder="设备种类" multiple collapse-tags @change="selectChange">
+            <!-- <el-select v-model="temp.firm.deviceName" placeholder="设备种类" multiple collapse-tags @change="selectChange">
               <el-option :value="mineStatusValue" style="height: auto">
                 <el-tree :data="treeData" show-checkbox node-key="id" ref="tree" highlight-current :props="defaultProps" @check-change="handleNodeClick"></el-tree>
               </el-option>
-            </el-select>
+            </el-select> -->
 
             <span style="margin-left: 20px">系统设备名</span>
             <el-input v-model="temp.firm.t" style="width: 190px; margin-right: 192px"></el-input>
@@ -85,7 +85,7 @@
           </el-form-item>
         </el-form>
         <div class="dialog-title">集成</div>
-        <el-form ref="dataForm" :model="temp" >
+        <el-form ref="dataForm" :model="temp">
           <el-form-item>
             <span>集成厂商</span>
             <el-input v-model="temp.installer.name" style="margin-right: 195px"></el-input>
@@ -170,19 +170,19 @@
             <el-input v-model="temp.owner.discardDate"></el-input>
           </el-form-item>
           <el-form-item>
-            <span >下次维护</span>
+            <span>下次维护</span>
             <el-input v-model="temp.owner.repairDate" style="margin-right: 195px"></el-input>
-            <span >下次检定</span>
+            <span>下次检定</span>
             <el-input v-model="temp.owner.checkDate"></el-input>
           </el-form-item>
           <el-form-item>
             <span>维护记录</span>
             <el-input v-model="temp.owner.repairRecord" style="width: 86%"></el-input>
-            </el-form-item>
+          </el-form-item>
           <el-form-item>
             <span>检定记录</span>
             <el-input v-model="temp.owner.checkRecord" style="width: 86%"></el-input>
-          </el-form-item> 
+          </el-form-item>
           <el-form-item>
             <span>负责人</span>
             <el-input v-model="temp.owner.chargeUser" style="margin-left: 35px; margin-right: 192px"></el-input>
@@ -226,17 +226,42 @@
           <el-button @click="printQrcode">打印</el-button>
         </span>
       </el-dialog>
+
+      <el-dialog title="上传excel文件" :visible.sync="uploadDialogVisible" width="30%" id="uploadModal">
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="row"><div class="col-lg-offset-2 col-lg-8 hint msg"></div></div>
+            <div class="row">
+              <div class="col-lg-12">
+                <p style="height: 0; overflow: hidden"><input type="text" name="type" /></p>
+                <p><input type="file" id="fileName" name="file" /></p>
+              </div>
+            </div>
+          </div>
+          <!--模态框主要内容--end-->
+          <!--模态框底部--start-->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary save-btn" style="width: 100%">上 传</button>
+          </div>
+        </form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
+import $ from 'jquery'
 import Pagination from '@/components/Pagination'
 import { fetchList, deleteDevice, saveDevice, getQrCode } from '@/api/device'
 import { list } from '@/api/autocontrol'
 import { parseTime } from '@/utils'
 import qs from 'qs'
 import QRCode from 'qrcodejs2'
+import { subList as getLimit } from '@/api/other'
 export default {
   name: 'Device-list',
   components: { Pagination },
@@ -244,6 +269,7 @@ export default {
     return {
       dialogVisible: false,
       printDialogVisible: false,
+      uploadDialogVisible: false,
       treeData: [],
       //device: '',
       treeAllData: [],
@@ -389,7 +415,9 @@ export default {
           datebad: '2050-02-01',
           lifespan: '2年1月10天'
         } */
-      ]
+      ],
+      prefix: '',
+      prefixType: ''
     }
   },
   created() {
@@ -397,16 +425,50 @@ export default {
     // this.list()
     this.getLimit()
   },
+  mounted() {
+    $('body').delegate('#uploadModal .save-btn', 'click', function (e) {
+      if ($('#fileName').val()) {
+        $.ajax({
+          url: 'http://47.104.26.21/gongkong3/source/upload.json',
+          type: 'POST',
+          cache: false,
+          data: new FormData($('#uploadForm')[0]),
+          processData: false,
+          contentType: false,
+          success: function (response, stutas, xhr) {
+            var retCode = response.retCode
+            if (retCode == 200) {
+              this.listQuery.pageNum = 1
+              this.getList()
+
+              // m_data.pageNum = 1
+              // deviceList()
+              // $('#uploadModal').modal('hide')
+              this.uploadDialogVisible = false
+            } else {
+              // $('#alertModal .modal-body').html(response.retDesc)
+              // $('#alertModal').modal('show')
+              // this.uploadDialogVisible = false
+              this.$message.error(response.retDesc)
+            }
+          }
+        })
+      } else {
+        $('#alertModal .modal-body').html('请选择一个文件')
+        $('#alertModal').modal('show')
+      }
+    })
+  },
   methods: {
     async getLimit() {
       const res = await getLimit()
       this.prefix = res.data.prefix
       this.prefixType = res.data.prefixType
-      },
-      getIotId() {
+    },
+    getIotId() {
       var temp = this.prefixType === 1 ? this.firm.number : this.owner != null ? this.owner.assetNo : ''
       return this.prefix + temp
-},
+    },
 
     getList() {
       this.listLoading = true
@@ -585,18 +647,20 @@ export default {
     },
     //打印
     handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then((excel) => {
-        const tHeader = ['系统设备名', '设备种类', '生产厂商', '品牌系列', '规格型号', '序列号', '质保期限', '出厂日期']
-        const filterVal = ['deviceName', 'firm.deviceName', 'firm.name', 'firm.brand', 'firm.pattern', 'firm.number', 'firm.createTime', 'firm.expiredTime']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: `设备列表(${parseTime(new Date(), '{y}-{m}-{d} {h}h{i}m{s}s')})`
-        })
-        this.downloadLoading = false
-      })
+      window.open('http://47.104.26.21/gongkong3/source/download.json', '_blank')
+
+      // this.downloadLoading = true
+      // import('@/vendor/Export2Excel').then((excel) => {
+      //   const tHeader = ['系统设备名', '设备种类', '生产厂商', '品牌系列', '规格型号', '序列号', '质保期限', '出厂日期']
+      //   const filterVal = ['deviceName', 'firm.deviceName', 'firm.name', 'firm.brand', 'firm.pattern', 'firm.number', 'firm.createTime', 'firm.expiredTime']
+      //   const data = this.formatJson(filterVal)
+      //   excel.export_json_to_excel({
+      //     header: tHeader,
+      //     data,
+      //     filename: `设备列表(${parseTime(new Date(), '{y}-{m}-{d} {h}h{i}m{s}s')})`
+      //   })
+      //   this.downloadLoading = false
+      // })
     },
     // selectChange(e) {
     //   var arrNew = []

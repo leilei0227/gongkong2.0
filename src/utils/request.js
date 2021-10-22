@@ -35,7 +35,7 @@ service.interceptors.request.use(
     },
     error => {
         // do something with request error
-        console.log(error) // for debug
+        // console.log(error) // for debug
         return Promise.reject(error)
     }
 )
@@ -53,10 +53,10 @@ service.interceptors.response.use(
      * You can also judge the status by HTTP Status retCode
      */
     response => {
-        console.log(response);
+        // console.log(response);
         const res = response.data
 
-        console.log(res.retCode, typeof res.retCode, res.retCode === 200);
+        // console.log(res.retCode, typeof res.retCode, res.retCode === 200);
 
         // if the custom retCode is not 20000, it is judged as an error.
         if (res.retCode !== 200) {
@@ -81,13 +81,13 @@ service.interceptors.response.use(
             // }
             return Promise.reject(new Error(res.message || 'Error'))
         } else {
-            console.log(res);
+            // console.log(res);
 
             return res
         }
     },
     error => {
-        console.log('err' + error) // for debug
+        // console.log('err' + error) // for debug
         Message({
             message: error.retDesc,
             type: 'error',
